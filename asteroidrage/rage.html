@@ -1,0 +1,51 @@
+<html>
+
+<style>
+    canvas {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+</style>
+
+<body>
+    <canvas id="canvasBackground" width="1000" height="500" style="z-index: 0; background-color: black"></canvas>
+    <canvas id="canvasMain" width="1000" height="500" style="z-index: 1"></canvas>
+    <canvas id="canvasShip" width="1000" height="500" style="z-index: 2"></canvas>
+    <canvas id="canvasShot" width="1000" height="500" style="z-index: 3"></canvas>
+
+    <script>
+        
+        var canvasBackground = document.getElementById('canvasBackground');
+        canvasBackground.width = window.innerWidth;
+        canvasBackground.height = window.innerHeight;
+        var canvasMain = document.getElementById('canvasMain');
+        canvasMain.width = window.innerWidth;
+        canvasMain.height = window.innerHeight;
+        var canvasShip = document.getElementById('canvasShip');
+        canvasShip.width = window.innerWidth;
+        canvasShip.height = window.innerHeight;
+        var canvasShot = document.getElementById('canvasShot');
+        canvasShot.width = window.innerWidth;
+        canvasShot.height = window.innerHeight;
+
+    </script>
+
+    <script type="module">
+        import{Space} from './space.js';
+        var space = new Space(200,10);
+        space.createStars();
+        space.letThereBeLight();
+        space.checkCollisions();
+
+        window.space = space;
+
+
+        window.run = function(input) {
+            eval(input);
+        }
+
+    
+    </script>
+</body>
+</html>

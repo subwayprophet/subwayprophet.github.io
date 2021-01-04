@@ -243,7 +243,7 @@ export function Ship(radius) {
                 }
                 //actually this needs to run every frame until we get a keyup
                 function holdDownArrowLeft() {
-                    s.rotate(-10);
+                    s.rotate(-4);
                     if(s.holdingDownKeys['ArrowLeft']) {
                         window.requestAnimationFrame(function() {
                             holdDownArrowLeft();
@@ -259,7 +259,7 @@ export function Ship(radius) {
                 }
                 //actually this needs to run every frame until we get a keyup
                 function holdDownArrowRight() {
-                    s.rotate(10);
+                    s.rotate(4);
                     if(s.holdingDownKeys['ArrowRight']) {
                         window.requestAnimationFrame(function() {
                             holdDownArrowRight();

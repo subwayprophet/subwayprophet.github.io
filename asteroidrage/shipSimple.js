@@ -217,6 +217,7 @@ export function Ship(radius) {
     }
 
 
+    this.holdingDownKeys = {};
     this.addEventListeners = function() {
         let s = this;
         window.addEventListener("keydown", function (event) {
@@ -236,11 +237,35 @@ export function Ship(radius) {
               case "Left": // IE/Edge specific value
               case "ArrowLeft":
                 // Do something for "left arrow" key press.
-                s.rotate(-10);
+                if(!s.holdingDownKeys['ArrowLeft']) {
+                    s.holdingDownKeys['ArrowLeft'] = true;
+                    holdDownArrowLeft();
+                }
+                //actually this needs to run every frame until we get a keyup
+                function holdDownArrowLeft() {
+                    s.rotate(-10);
+                    if(s.holdingDownKeys['ArrowLeft']) {
+                        window.requestAnimationFrame(function() {
+                            holdDownArrowLeft();
+                        });
+                    }
+                }
                 break;
               case "Right": // IE/Edge specific value
               case "ArrowRight":
-                s.rotate(10);
+                if(!s.holdingDownKeys['ArrowRight']) {
+                    s.holdingDownKeys['ArrowRight'] = true;
+                    holdDownArrowRight();
+                }
+                //actually this needs to run every frame until we get a keyup
+                function holdDownArrowRight() {
+                    s.rotate(10);
+                    if(s.holdingDownKeys['ArrowRight']) {
+                        window.requestAnimationFrame(function() {
+                            holdDownArrowRight();
+                        });
+                    }
+                }
                 break;
             case " ":
                 s.fireGun();
@@ -259,5 +284,20 @@ export function Ship(radius) {
             // Cancel the default action to avoid it being handled twice
             event.preventDefault();
           }, true);
+
+          window.addEventListener('keyup',function(event) {
+            switch(event.key) {
+                case "ArrowLeft":
+                    // Do something for "left arrow" key press.
+                    s.holdingDownKeys['ArrowLeft'] = false;
+                    //actually this needs to run every frame until we get a keyup
+                    break;
+                case "ArrowRight":
+                    // Do something for "left arrow" key press.
+                    s.holdingDownKeys['ArrowRight'] = false;
+                    //actually this needs to run every frame until we get a keyup
+                    break;
+            }
+          })
     }
 }

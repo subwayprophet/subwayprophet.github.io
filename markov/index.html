@@ -23,10 +23,15 @@
     <script>
         function imitate() {
             let url = document.getElementById('sourceUrl').value;
+            //silly of course
+            var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
             let Model = window.Model;
             //fetch('/copperfield.txt')
-            fetch(url)
-            .then(response => response.text())
+            fetch(proxyUrl + url)
+            .then(function(response){
+                let huh = response;
+                return huh.text()
+            })
             .then(function(data) {
                 trainingText = data;
                 let model = new Model(trainingText);

@@ -6,6 +6,9 @@ export function Word(wordString, nextWordHopMap) {
         let w = this;
         let nextWord;
         let nextWords = w.hopMap[w.stringVal];
+        console.log('stringVal: ' + w.stringVal)
+        if(!nextWords) return 'NO NEXT WORDS';
+
         let nextWordStrings = Object.keys(nextWords);
         let nextWordCounts = Object.values(nextWords);
         let nextWordCount = nextWordCounts.reduce((accumulator,currVal) => accumulator + currVal);
@@ -30,7 +33,11 @@ export function Word(wordString, nextWordHopMap) {
             //console.log('random: ' + random);
             return random < candidateProbability;
         }
-        if(!nextWord) nextWord = nextWordStrings[0];
+        if(!nextWord) {
+            console.log('no next word found for ' + w.stringVal)
+            nextWord = nextWordStrings[0];
+        }
+        //if(!nextWord) nextWord = 'NONE';
         return nextWord;
     }
 }

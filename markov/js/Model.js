@@ -34,14 +34,29 @@ function Model(trainingText) {
         let words = Object.keys(m.hopMap);
         words = shuffle(words);
         
-        for(let i=0; i<words.length; i++) {
-            let wordString = words[i];
-            let showString = wordString;
-            if(i===0) showString = showString.capitalizeFirstLetter();
-            output += showString + ' ';
-            let word = new Word(wordString,m.hopMap);
-            output += word.getNext() + ' ';
+        let done = false;
+        let wordString = words[0];
+        let count = 0;
+        output += wordString.capitalizeFirstLetter() + ' ';
+        while(!done) {
+            let word = new Word(wordString, m.hopMap);
+            let nextWordString = word.getNext();
+            output += nextWordString + ' ';
+            wordString = nextWordString;
+            if((words.length - count) === 1) {
+                done = true;
+            } else {
+                count++;
+            }
         }
+//        for(let i=0; i<words.length; i++) {
+//            let wordString = words[i];
+//            let showString = wordString;
+//            //if(i===0) showString = showString.capitalizeFirstLetter();
+//            output += showString + ' ';
+//            let word = new Word(wordString,m.hopMap);
+//            output += word.getNext() + ' ';
+ //       }
         this.output = output;
 
         function shuffle() {

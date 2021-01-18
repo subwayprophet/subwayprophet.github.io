@@ -1,8 +1,15 @@
 <html>
 
 <body>
-    Source text:
-    <input type="text" id="sourceUrl"/><input type="button" value="Imitate!" onclick="imitate()"/>
+    <p>
+        Source url:
+        <input type="text" id="sourceUrl"/><input type="button" value="Imitate!" onclick="imitateUrl()"/>    
+    </p>
+    <p>
+        Or paste text:
+        <textarea id="sourceTextArea" rows="20" cols="100"/></textarea>
+        <input type="button" value="Imitate!" onclick="imitatePaste()"/> 
+    </p>
     <div id="output"></div>
 
     <script type="module">
@@ -21,7 +28,7 @@
     </script>
 
     <script>
-        function imitate() {
+        function imitateUrl() {
             let url = document.getElementById('sourceUrl').value;
             //silly of course
             var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
@@ -32,16 +39,25 @@
                 let huh = response;
                 return huh.text()
             })
-            .then(function(data) {
-                trainingText = data;
-                let model = new Model(trainingText);
-                model.train();
-                model.generate();
-                console.log(model)
-                let output = document.getElementById('output');
-                output.textContent = model.output;
-                window.model = model;
+            .then(function(trainingText) {
+                trainAndGenerate(trainingText);
             })    
+        }
+
+        function imitatePaste() {
+            let trainingText = document.getElementById('sourceTextArea').value;
+            trainAndGenerate(trainingText);
+        }
+
+        function trainAndGenerate(trainingText) {
+            let model = new Model(trainingText);
+            model.train();
+            model.generate();
+            console.log(model)
+            let output = document.getElementById('output');
+            output.textContent = model.output;
+            window.model = model;
+
         }
 
     </script>

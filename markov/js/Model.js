@@ -1,4 +1,5 @@
 import {Word} from './Word.js';
+import {test} from './helpers.js';
 
 var hopMapStatic = {
     chicken: {
@@ -35,7 +36,9 @@ function Model(trainingText) {
         
         for(let i=0; i<words.length; i++) {
             let wordString = words[i];
-            output += wordString + ' ';
+            let showString = wordString;
+            if(i===0) showString = showString.capitalizeFirstLetter();
+            output += showString + ' ';
             let word = new Word(wordString,m.hopMap);
             output += word.getNext() + ' ';
         }

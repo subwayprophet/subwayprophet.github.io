@@ -1,0 +1,55 @@
+<html>
+
+<style>
+    canvas {
+        position: absolute;
+        left: 0;
+        top: 40;
+    }
+</style>
+
+<body>
+    <button onclick="letThereBeLife()">let there be life</button><input type="text" id="cellsInput" placeholder="200"/>
+    <button onclick="pause()">pause</button>
+    <button onclick="tick()">tick</button>
+    <button onclick="test()">test</button><input type="text" id="testInput" placeholder="2,3"/>
+    <canvas id="canvasBackground" width="1000" height="500" style="z-index: 0; background-color: white"></canvas>
+    <canvas id="canvasMain" width="1000" height="500" style="z-index: 1"></canvas>
+
+    <script>
+        
+        var canvasBackground = document.getElementById('canvasBackground');
+        canvasBackground.width = window.innerWidth;
+        canvasBackground.height = window.innerHeight;
+        var canvasMain = document.getElementById('canvasMain');
+        canvasMain.width = window.innerWidth;
+        canvasMain.height = window.innerHeight;
+
+    </script>
+
+    <script type="module">
+        import{Game} from './GoL.js';
+        window.Game = Game;
+
+        window.run = function(input) {
+            eval(input);
+        }
+    </script>
+    <script>
+        function letThereBeLife() {
+            let cells = document.getElementById('cellsInput').value;
+            var game = new window.Game(cells,cells);
+            game.start();
+        }
+        function pause() {
+            window.game.pause();
+        }
+        function tick() {
+            window.game.tick();
+        }
+        function test() {
+            window.game.test();
+        }
+    </script>
+</body>
+</html>

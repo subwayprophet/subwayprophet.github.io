@@ -3,7 +3,7 @@ import { canvas } from './canvas.js'
 import { getRandomIntInclusive } from './canvas.js'
 
 export class Game {
-    constructor(rows, cols, density) {
+    constructor(rows, cols, density, tickInterval) {
         this.grid = this.createGrid(rows, cols, density)
         this.cols = cols;
         this.rows = rows;
@@ -12,6 +12,7 @@ export class Game {
         this.width = canvas.getBoundingClientRect().width;
         this.height = canvas.getBoundingClientRect().height;
         this.density = density;
+        this.tickInterval = tickInterval;
     }
 
     test() {
@@ -42,7 +43,7 @@ export class Game {
             if (!g.paused) {
                 g.tick();
             }
-        }, 10)
+        }, g.tickInterval)
         g.paused = false;
     }
 

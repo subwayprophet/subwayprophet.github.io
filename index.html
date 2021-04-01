@@ -9,7 +9,10 @@
 </style>
 
 <body>
-    <button onclick="letThereBeLife()">let there be life</button><input type="text" id="cellsInput" placeholder="150 (cells)"/><input type="text" id="cellsDensity" placeholder="0.5 (density)"/>
+    <button onclick="letThereBeLife()">let there be life</button>
+    <input type="text" id="cellsInput" placeholder="150 (cells)"/>
+    <input type="text" id="cellsDensity" placeholder="0.5 (density)"/>
+    <input type="text" id="tickInterval" placeholder="10 (ms between ticks)"/>
     <button onclick="pause()">pause</button>
     <button onclick="tick()">tick</button>
     <button onclick="invadeRandomly()">invade!</button>
@@ -38,11 +41,11 @@
     </script>
     <script>
         function letThereBeLife() {
-            let cells = document.getElementById('cellsInput').value;
-            if(!cells) cells = 150;
-            let cellsDensity = document.getElementById('cellsDensity').value;
-            if(!cellsDensity) cellsDensity = 0.5;
-            var game = new Game(cells,cells,cellsDensity);
+            let cells = document.getElementById('cellsInput').value || 150;
+            let cellsDensity = document.getElementById('cellsDensity').value || 0.5;
+            let tickInterval = document.getElementById('tickInterval').value || 10;
+
+            var game = new Game(cells,cells,cellsDensity,tickInterval);
             game.start();
             window.game = game; //make available to other functions
         }

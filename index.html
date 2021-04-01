@@ -9,7 +9,7 @@
 </style>
 
 <body>
-    <button onclick="letThereBeLife()">let there be life</button><input type="text" id="cellsInput" placeholder="200"/>
+    <button onclick="letThereBeLife()">let there be life</button><input type="text" id="cellsInput" placeholder="150"/>
     <button onclick="pause()">pause</button>
     <button onclick="tick()">tick</button>
     <button onclick="test()">test</button><input type="text" id="testInput" placeholder="2,3"/>
@@ -38,6 +38,7 @@
     <script>
         function letThereBeLife() {
             let cells = document.getElementById('cellsInput').value;
+            if(!cells) cells = 150;
             var game = new window.Game(cells,cells);
             game.start();
         }

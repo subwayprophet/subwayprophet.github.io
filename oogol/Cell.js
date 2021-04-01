@@ -1,11 +1,11 @@
 import { canvas } from './canvas.js'
 
 export class Cell {
-    constructor(x,y,grid) {
+    constructor(x,y,grid,alive) {
         //for logic
         this.x = x;
         this.y = y;    
-        this.alive = Math.random() > 0.8 ? true : false;
+        this.alive = alive;
         //this.alive = false;
         this.newAlive = this.alive;
         this.grid = grid;

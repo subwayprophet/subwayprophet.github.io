@@ -9,9 +9,10 @@
 </style>
 
 <body>
-    <button onclick="letThereBeLife()">let there be life</button><input type="text" id="cellsInput" placeholder="150"/>
+    <button onclick="letThereBeLife()">let there be life</button><input type="text" id="cellsInput" placeholder="150 (cells)"/><input type="text" id="cellsDensity" placeholder="0.5 (density)"/>
     <button onclick="pause()">pause</button>
     <button onclick="tick()">tick</button>
+    <button onclick="invadeRandomly()">invade!</button>
     <button onclick="test()">test</button><input type="text" id="testInput" placeholder="2,3"/>
     <canvas id="canvasBackground" width="1000" height="500" style="z-index: 0; background-color: white"></canvas>
     <canvas id="canvasMain" width="1000" height="500" style="z-index: 1"></canvas>
@@ -39,8 +40,11 @@
         function letThereBeLife() {
             let cells = document.getElementById('cellsInput').value;
             if(!cells) cells = 150;
-            var game = new window.Game(cells,cells);
+            let cellsDensity = document.getElementById('cellsDensity').value;
+            if(!cellsDensity) cellsDensity = 0.5;
+            var game = new Game(cells,cells,cellsDensity);
             game.start();
+            window.game = game; //make available to other functions
         }
         function pause() {
             window.game.pause();
@@ -50,6 +54,9 @@
         }
         function test() {
             window.game.test();
+        }
+        function invadeRandomly() {
+            window.game.invadeRandomly();
         }
     </script>
 </body>

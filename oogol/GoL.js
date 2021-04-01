@@ -1,15 +1,17 @@
 import { Cell } from './Cell.js'
 import { canvas } from './canvas.js'
+import { getRandomIntInclusive } from './canvas.js'
 
 export class Game {
-    constructor(rows, cols) {
-        this.grid = this.createGrid(rows, cols)
+    constructor(rows, cols, density) {
+        this.grid = this.createGrid(rows, cols, density)
         this.cols = cols;
         this.rows = rows;
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.width = canvas.getBoundingClientRect().width;
         this.height = canvas.getBoundingClientRect().height;
+        this.density = density;
     }
 
     test() {
@@ -18,8 +20,20 @@ export class Game {
         let asArr = value.split(',');
         let x = asArr[0];
         let y = asArr[1];
-        this.grid[x][y].live();
+        this.grid[x][y].becomeAlive();
         this.grid[x][y].paint();
+    }
+
+    //dump some new life in randomly!
+    invadeRandomly() {
+        let startingX = getRandomIntInclusive(0,(this.cols));
+        let startingY = getRandomIntInclusive(0,(this.rows));
+        let size = getRandomIntInclusive(0,20);
+        for(let x=0; x<size; x++) {
+            for(let y=0; y<size; y++) {
+                this.grid[startingX+x][startingY+y].becomeAlive();
+            }
+        }
     }
 
     start() {
@@ -28,7 +42,7 @@ export class Game {
             if (!g.paused) {
                 g.tick();
             }
-        }, 100)
+        }, 10)
         g.paused = false;
     }
 
@@ -53,12 +67,13 @@ export class Game {
         });
     }
 
-    createGrid(rows, cols) {
+    createGrid(rows, cols, density) {
         let grid = [];
         for (let x = 0; x < cols; x++) {
             grid[x] = [];
             for (let y = 0; y < rows; y++) {
-                grid[x][y] = new Cell(x, y, grid);
+                let alive = Math.random() > density ? true : false;
+                grid[x][y] = new Cell(x, y, grid, alive);
             }
         }
         return grid;

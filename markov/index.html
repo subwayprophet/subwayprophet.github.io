@@ -1,16 +1,21 @@
 <html>
 
 <body>
+    <p>Paste text:</p>
+    <textarea id="sourceTextArea" rows="20" cols="100"/></textarea>    
+    <p>Temperature:</p>
+    <input id="inputTemperature" type="number" value="0.2"/>
+    <input type="button" value="Imitate!" onclick="imitatePaste()"/> 
+
+    <div id="output"></div>
+
+<!--
     <p>
         Source url:
         <input type="text" id="sourceUrl"/><input type="button" value="Imitate!" onclick="imitateUrl()"/>    
     </p>
-    <p>
-        Or paste text:
-        <textarea id="sourceTextArea" rows="20" cols="100"/></textarea>
-        <input type="button" value="Imitate!" onclick="imitatePaste()"/> 
-    </p>
-    <div id="output"></div>
+-->
+
 
     <script type="module">
         //import {Word} from './js/Word.js';
@@ -46,11 +51,13 @@
 
         function imitatePaste() {
             let trainingText = document.getElementById('sourceTextArea').value;
-            trainAndGenerate(trainingText);
+            let temperature = parseFloat(document.getElementById('inputTemperature').value);
+            trainAndGenerate(trainingText,temperature);
         }
 
-        function trainAndGenerate(trainingText) {
+        function trainAndGenerate(trainingText,temperature) {
             let model = new Model(trainingText);
+            model.temperature = temperature;
             model.train();
             model.generate();
             console.log(model)

@@ -16,6 +16,7 @@ var hopMapStatic = {
 function Model(trainingText) {
     this.trainingText = trainingText;
     this.hopMap = {};
+    this.temperature = 0.2; //default
     let trainingWords = trainingText.split(' ');
     this.train = function() {
         let m = this;
@@ -40,6 +41,7 @@ function Model(trainingText) {
         output += wordString.capitalizeFirstLetter() + ' ';
         while(!done) {
             let word = new Word(wordString, m.hopMap);
+            word.temperature = m.temperature;
             let nextWordString = word.getNext();
             output += nextWordString + ' ';
             wordString = nextWordString;

@@ -1,4 +1,4 @@
-import {canvasBackground} from './canvas.js'
+import {canvasBackground, getRandomIntInclusive} from './canvas.js'
 import {AsteroidField} from './asteroidfield.js';
 import {Ship} from './shipSimple.js';
 
@@ -14,7 +14,7 @@ export function Space(starCount, planetCount) {
 
     let ctx = canvasBackground.getContext('2d');
 
-    var asteroidField = new AsteroidField(5);
+    var asteroidField = new AsteroidField(Math.floor(Math.random() * 30));
     asteroidField.createAsteroidField();
     asteroidField.moveRandomly();
 
@@ -68,7 +68,17 @@ export function Space(starCount, planetCount) {
                     asteroid.explode()
                 }                
             }
-            }
+            //..and asteroid-asteroid collisions (bounce!)
+            asteroids.forEach(a => {
+                if(a === asteroid) return;
+                if(Math.abs(a.currX - asteroid.currX) < a.radius && Math.abs(a.currY - asteroid.currY) < a.radius) {
+                    //todo: physics based on mass(radius?) and angle?
+                    a.orientation = getRandomIntInclusive(0,360);
+                    asteroid.orientation = getRandomIntInclusive(0,360);
+                }
+    
+            })
+        }
 
 
         window.requestAnimationFrame(function() {

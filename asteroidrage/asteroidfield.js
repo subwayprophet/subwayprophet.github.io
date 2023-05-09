@@ -1,5 +1,6 @@
 import {canvas} from './canvas.js';
 import {getRandomIntInclusive} from './canvas.js';
+import {pickRandomColor} from './canvas.js';
 
 export function AsteroidField(asteroidCount) {
     this.asteroidCount = asteroidCount;
@@ -15,10 +16,19 @@ export function AsteroidField(asteroidCount) {
         let af = this;
         for(let i=0; i<af.asteroidCount; i++) {
             let radius = af.radius * Math.random();
-            let asteroid = new Asteroid(radius);
+            let asteroid = new Asteroid(radius,af);
             af.asteroids.push(asteroid);
             asteroid.draw();
         }
+    }
+
+    this.destroyAsteroid = function(asteroid) {
+        this.asteroids = this.asteroids.filter(a => a !== asteroid);
+    }
+
+    this.debrisFields = [];
+    this.createDebrisField = function(sourceAsteroid) {
+        this.debrisFields.push(new DebrisField(sourceAsteroid.currX,sourceAsteroid.currY,sourceAsteroid.radius,this))
     }
 
     this.moveRandomly = function() {
@@ -28,15 +38,19 @@ export function AsteroidField(asteroidCount) {
             let asteroid = af.asteroids[i];
             asteroid.move();
         }
+        this.debrisFields.forEach(df => df.move());
         window.requestAnimationFrame(function() {
             af.moveRandomly();
         })
     }
 
-    function Asteroid(radius) {
+function Asteroid(radius,field) {
         let a = this;
         this.x0 = width * Math.random();
         this.y0 = height * Math.random();
+        this.radius = radius;
+
+        this.field = field;
 
         this.orientation = getRandomIntInclusive(0,360);
         this.speed = Math.random() * 10; //aka movement vector magnitude aka hypotneuse length
@@ -46,6 +60,8 @@ export function AsteroidField(asteroidCount) {
 
         this.prevX = this.currX;
         this.prevY = this.currY;
+
+        this.color = 'white'
 
         //ctx.globalCompositeOperation = 'source-out';
 
@@ -74,6 +90,8 @@ export function AsteroidField(asteroidCount) {
             ctx.arc(a.currX,a.currY,radius,0,degrees.toRads());
             ctx.fillStyle = 'white';
             ctx.fill();
+            a.field.destroyAsteroid(a);
+            a.field.createDebrisField(a);
         }
     
         this.draw = function() {
@@ -84,7 +102,7 @@ export function AsteroidField(asteroidCount) {
             if(a.currX < 0) a.currX = width;
             if(a.currY < 0) a.currY = height;
             ctx.arc(a.currX,a.currY,radius,0,degrees.toRads());
-            ctx.strokeStyle = 'white';
+            ctx.strokeStyle = this.color;
             ctx.stroke();
         }
 
@@ -102,6 +120,40 @@ export function AsteroidField(asteroidCount) {
             this.currY += y;
             this.draw();
         }
+
+    }
+
+    function DebrisField(x,y,radius,field) {
+        this.sourceX = x;
+        this.sourceY = y;
+        this.radius = radius;
+        this.field = field;
+
+        this.initialPiecesOfDebrisCount = 8;
+
+        this.piecesOfDebris = [];
+
+
+        this.beBorn = function() {
+            let df = this;
+            for(let i=0; i<df.initialPiecesOfDebrisCount; i++) {
+                let radius = df.radius * Math.random() / 3;
+                let asteroid = new Asteroid(radius,df.field);
+                asteroid.currX = df.sourceX; 
+                asteroid.currY = df.sourceY;
+                asteroid.prevX = df.sourceX; 
+                asteroid.prevY = df.sourceY;
+                asteroid.speed = asteroid.speed / 5;
+                asteroid.color = pickRandomColor();
+                this.piecesOfDebris.push(asteroid);
+            }
+        }
+
+        this.move = function() {
+            this.piecesOfDebris.forEach(pod => pod.move());
+        }
+
+        this.beBorn();
 
     }
 }

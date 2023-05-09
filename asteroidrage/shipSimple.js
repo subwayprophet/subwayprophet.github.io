@@ -81,8 +81,8 @@ export function Ship(radius) {
         let s = this;
         ctx.beginPath();
         let degrees = 360;
-        ctx.arc(s.currX,s.currY,10,0,degrees.toRads());
-        ctx.fillStyle = '#fcc';
+        ctx.arc(s.currX,s.currY,20,0,degrees.toRads());
+        ctx.fillStyle = '#f00';
         ctx.fill();
     }
 
@@ -209,8 +209,8 @@ export function Ship(radius) {
             let degrees = 360;
             ctxShot.clearRect(0,0,canvasShotWidth,canvasShotWidth);
             ctx.beginPath();
-            ctx.arc(shot.currX,shot.currY,2,0,degrees.toRads());
-            ctx.fillStyle = 'white';
+            ctx.arc(shot.currX,shot.currY,4,0,degrees.toRads());
+            ctx.fillStyle = 'orange';
             ctx.fill();
         }
 

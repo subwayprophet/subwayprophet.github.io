@@ -20,3 +20,8 @@ export function lineToAngle(ctx,startX,startY,length,angle) {
     ctx.moveTo(startX,startY);
     ctx.lineTo(endX,endY);
 }
+
+export function pickRandomColor() {
+    let colors = ['red','orange','yellow','green','blue','indigo','violet'];
+    return colors[Math.floor(Math.random() * colors.length)];
+}

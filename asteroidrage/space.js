@@ -2,6 +2,9 @@ import {canvasBackground, getRandomIntInclusive} from './canvas.js'
 import {AsteroidField} from './asteroidfield.js';
 import {Ship} from './shipSimple.js';
 
+const MAX_COLLISIONS_PER_TICKINTERVAL = 100;
+const TICKS_PER_TICKINTERVAL = 5;
+
 export function Space(starCount, planetCount) {
     this.starCount = starCount;
     this.planetCount = planetCount;
@@ -44,12 +47,27 @@ export function Space(starCount, planetCount) {
         }
     }
 
+    this.collisionsCounted = 0;
+    this.collisionTicks = 0;
     this.checkCollisions = function() {
         let sp = this;
 
         //check for asteroid-ship collisions...
         let asteroids = asteroidField.asteroids;
         for(let i=0; i<asteroids.length; i++) {
+
+            //prevent too-wild explosions from killing the game
+            if(sp.collisionsCounted >= MAX_COLLISIONS_PER_TICKINTERVAL) {
+                console.log('RESETTING PER-TICK COLLISION LIMITER');
+                this.collisionsCounted = 0;
+                break;
+            }
+            if(sp.collisionTicks >= TICKS_PER_TICKINTERVAL) {
+                console.log('RESETTING PER-TICK COLLISION LIMITER');
+                this.collisionTicks = 0;
+                break;
+            }
+
             let asteroid = asteroids[i];
             let asteroidX = asteroid.currX;
             let asteroidY = asteroid.currY;
@@ -65,6 +83,7 @@ export function Space(starCount, planetCount) {
                 let shotX = shot.currX;
                 let shotY = shot.currY;
                 if(Math.abs(asteroidX - shotX) < asteroid.radius && Math.abs(asteroidY - shotY) < asteroid.radius) { //todo: get actual bounding shape from ship!
+                    sp.collisionsCounted++;
                     asteroid.explode()
                 }                
             }
@@ -78,7 +97,8 @@ export function Space(starCount, planetCount) {
             //     }
             // })
         }
-
+        
+        sp.collisionTicks++;
         window.requestAnimationFrame(function() {
             sp.checkCollisions();
         })

@@ -64,22 +64,20 @@ export function Space(starCount, planetCount) {
                 let shot = shots[i];
                 let shotX = shot.currX;
                 let shotY = shot.currY;
-                if(Math.abs(asteroidX - shotX) < 30 && Math.abs(asteroidY - shotY) < 30) { //todo: get actual bounding shape from ship!
+                if(Math.abs(asteroidX - shotX) < asteroid.radius && Math.abs(asteroidY - shotY) < asteroid.radius) { //todo: get actual bounding shape from ship!
                     asteroid.explode()
                 }                
             }
-            //..and asteroid-asteroid collisions (bounce!)
-            asteroids.forEach(a => {
-                if(a === asteroid) return;
-                if(Math.abs(a.currX - asteroid.currX) < a.radius && Math.abs(a.currY - asteroid.currY) < a.radius) {
-                    //todo: physics based on mass(radius?) and angle?
-                    a.orientation = getRandomIntInclusive(0,360);
-                    asteroid.orientation = getRandomIntInclusive(0,360);
-                }
-    
-            })
+            //..and asteroid-asteroid collisions (bounce!) (actually this is boring)
+            // asteroids.forEach(a => {
+            //     if(a === asteroid) return;
+            //     if(Math.abs(a.currX - asteroid.currX) < a.radius && Math.abs(a.currY - asteroid.currY) < a.radius) {
+            //         //todo: physics based on mass(radius?) and angle?
+            //         a.orientation = getRandomIntInclusive(0,360);
+            //         asteroid.orientation = getRandomIntInclusive(0,360);
+            //     }
+            // })
         }
-
 
         window.requestAnimationFrame(function() {
             sp.checkCollisions();

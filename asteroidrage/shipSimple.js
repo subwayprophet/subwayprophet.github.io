@@ -60,8 +60,8 @@ export function Ship(radius) {
 
     this.explode = function() {
         let s = this;
-        console.log('YOU COLLIDED WITH AN ASTEROID!!! LOSESR!!!');
-        console.log('ship centerpoint: ' + this.currX + ', ' + this.currY);
+        // console.log('YOU COLLIDED WITH AN ASTEROID!!! LOSESR!!!');
+        // console.log('ship centerpoint: ' + this.currX + ', ' + this.currY);
         ctx.beginPath();
         let degrees = 360;
         ctx.arc(s.currX,s.currY,20,0,degrees.toRads());

@@ -38,7 +38,7 @@ export function AsteroidField(asteroidCount) {
             let asteroid = af.asteroids[i];
             asteroid.move();
         }
-        this.debrisFields.forEach(df => df.move());
+        //this.debrisFields.forEach(df => df.move());
         window.requestAnimationFrame(function() {
             af.moveRandomly();
         })
@@ -49,6 +49,8 @@ function Asteroid(radius,field) {
         this.x0 = width * Math.random();
         this.y0 = height * Math.random();
         this.radius = radius;
+        
+        this.isDebris = false;
 
         this.field = field;
 
@@ -95,6 +97,11 @@ function Asteroid(radius,field) {
         }
     
         this.draw = function() {
+            //if we're debris then don't proceed beyond the edge of the screen
+            if(this.isDebris && (a.currX > width || a.currY > height || a.currX < 0 || a.currY < 0)) {
+                this.field.destroyAsteroid(this);
+                return;
+            }
             let degrees = 360;
             ctx.beginPath();
             if(a.currX > width) a.currX = 0;
@@ -107,7 +114,7 @@ function Asteroid(radius,field) {
         }
 
         this.move = function() {
-            let a = this;
+            let a = this;            
             let hypoteneuse = a.speed;
             let x = Math.cos(a.orientation) * hypoteneuse;
             let y = Math.sin(a.orientation) * hypoteneuse;
@@ -137,7 +144,7 @@ function Asteroid(radius,field) {
         this.beBorn = function() {
             let df = this;
             for(let i=0; i<df.initialPiecesOfDebrisCount; i++) {
-                let radius = df.radius * Math.random() / 3;
+                let radius = df.radius * Math.random();
                 let asteroid = new Asteroid(radius,df.field);
                 asteroid.currX = df.sourceX; 
                 asteroid.currY = df.sourceY;
@@ -145,7 +152,9 @@ function Asteroid(radius,field) {
                 asteroid.prevY = df.sourceY;
                 asteroid.speed = asteroid.speed / 5;
                 asteroid.color = pickRandomColor();
-                this.piecesOfDebris.push(asteroid);
+                asteroid.isDebris = true;
+                // this.piecesOfDebris.push(asteroid);
+                df.field.asteroids.push(asteroid);
             }
         }
 

@@ -58,12 +58,12 @@ export function Space(starCount, planetCount) {
 
             //prevent too-wild explosions from killing the game
             if(sp.collisionsCounted >= MAX_COLLISIONS_PER_TICKINTERVAL) {
-                console.log('RESETTING PER-TICK COLLISION LIMITER');
+                // console.log('RESETTING PER-TICK COLLISION LIMITER');
                 this.collisionsCounted = 0;
                 break;
             }
             if(sp.collisionTicks >= TICKS_PER_TICKINTERVAL) {
-                console.log('RESETTING PER-TICK COLLISION LIMITER');
+                // console.log('RESETTING PER-TICK COLLISION LIMITER');
                 this.collisionTicks = 0;
                 break;
             }

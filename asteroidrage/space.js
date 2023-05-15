@@ -51,6 +51,9 @@ export function Space(starCount, planetCount) {
     this.collisionTicks = 0;
     this.checkCollisions = function() {
         let sp = this;
+        
+        //first remove any objects that should be removed (is this massively efficient??)
+        asteroidField.asteroids = asteroidField.asteroids.filter(a => !a.shouldDisappear());
 
         //check for asteroid-ship collisions...
         let asteroids = asteroidField.asteroids;

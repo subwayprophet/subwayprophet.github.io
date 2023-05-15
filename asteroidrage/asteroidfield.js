@@ -65,6 +65,9 @@ function Asteroid(radius,field) {
 
         this.color = 'white'
 
+        this.ticksLifespan = 500; //how many ticks before this asteroid maybe disappears?
+        this.ticksLived = 0; //how many ticks has this asteroid lived?
+
         //ctx.globalCompositeOperation = 'source-out';
 
         let jiggleFrame = Math.floor(Math.random() * 50);
@@ -126,6 +129,11 @@ function Asteroid(radius,field) {
             this.currX += x;
             this.currY += y;
             this.draw();
+            this.ticksLived++;
+        }
+
+        this.shouldDisappear = function() { //todo: awkward naming?
+            return this.isDebris && (this.ticksLived >= this.ticksLifespan); //some chance of disappearing if old enough? makes a 'more natural randomish fadeout effect'??
         }
 
     }

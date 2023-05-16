@@ -15,6 +15,12 @@ export function Space(starCount, planetCount) {
     this.stars = [];
     this.planets = [];
 
+    this.player;
+    this.setPlayer = function(player) {
+        this.player = player;
+        this.player.update();
+    }
+
     let ctx = canvasBackground.getContext('2d');
 
     var asteroidField = new AsteroidField(Math.floor(Math.random() * 30));
@@ -57,6 +63,7 @@ export function Space(starCount, planetCount) {
 
         //check for asteroid-ship collisions...
         let asteroids = asteroidField.asteroids;
+        let player = this.player;
         for(let i=0; i<asteroids.length; i++) {
 
             //prevent too-wild explosions from killing the game
@@ -76,8 +83,9 @@ export function Space(starCount, planetCount) {
             let asteroidY = asteroid.currY;
             let shipX = ship.currX;
             let shipY = ship.currY;
-            if(Math.abs(asteroidX - shipX) < 30 && Math.abs(asteroidY - shipY) < 30) { //todo: get actual bounding shape from ship!
-                ship.explode()
+            if(!asteroid.isDebris && Math.abs(asteroidX - shipX) < 30 && Math.abs(asteroidY - shipY) < 30) { //todo: get actual bounding shape from ship!
+                ship.explode();
+                player.health--;
             }
             //..and asteroid-shot collisions
             let shots = ship.shots;
@@ -88,6 +96,7 @@ export function Space(starCount, planetCount) {
                 if(Math.abs(asteroidX - shotX) < asteroid.radius && Math.abs(asteroidY - shotY) < asteroid.radius) { //todo: get actual bounding shape from ship!
                     sp.collisionsCounted++;
                     asteroid.explode()
+                    player.score++;
                 }                
             }
             //..and asteroid-asteroid collisions (bounce!) (actually this is boring)

@@ -4,11 +4,22 @@
     canvas {
         position: absolute;
         left: 0;
-        top: 0;
+        top: 40;
+    }
+    .ui {
+        color: white;
+        font-size: larger;
+    }
+    body {
+        background-color: black;
     }
 </style>
 
 <body>
+    <div class="ui">
+        score: <span id="score"></span>
+        health: <span id="health"></span>
+    </div>
     <canvas id="canvasBackground" width="1000" height="500" style="z-index: 0; background-color: black"></canvas>
     <canvas id="canvasMain" width="1000" height="500" style="z-index: 1"></canvas>
     <canvas id="canvasShip" width="1000" height="500" style="z-index: 2"></canvas>
@@ -34,6 +45,13 @@
     <script type="module">
         import{Space} from './space.js';
         var space = new Space(200,10);
+
+        import {Player} from './player.js';
+        let player = new Player('Zorblebox Grabanini');
+        player.setScoreEl(document.querySelector('#score')); //todo: gather these various ui elements into their own class?
+        player.setHealthEl(document.querySelector('#health'));
+        space.setPlayer(player);
+
         space.createStars();
         space.letThereBeLight();
         space.checkCollisions();

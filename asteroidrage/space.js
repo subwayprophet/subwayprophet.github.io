@@ -94,9 +94,10 @@ export function Space(starCount, planetCount) {
                 let shotX = shot.currX;
                 let shotY = shot.currY;
                 if(Math.abs(asteroidX - shotX) < asteroid.radius && Math.abs(asteroidY - shotY) < asteroid.radius) { //todo: get actual bounding shape from ship!
+                    asteroid.getHit(shot.power);
                     sp.collisionsCounted++;
-                    asteroid.explode()
                     player.score++;
+                    if(asteroid.shouldExplode()) asteroid.explode();
                 }                
             }
             //..and asteroid-asteroid collisions (bounce!) (actually this is boring)

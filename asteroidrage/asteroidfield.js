@@ -49,8 +49,13 @@ function Asteroid(radius,field) {
         this.x0 = width * Math.random();
         this.y0 = height * Math.random();
         this.radius = radius;
+
+        this.health = this.radius;
         
         this.isDebris = false;
+        this.shouldExplode = function() {
+            return this.health <= 0;
+        }
 
         this.field = field;
 
@@ -86,15 +91,19 @@ function Asteroid(radius,field) {
             }
         }
 
-        this.explode = function() {
-            let a = this;
-            // console.log('ASTEROID WAS HIT BY SHOT!!');
-            // console.log('asteroid centerpoint: ' + a.currX + ', ' + a.currY);
+        this.getHit = function(power) {
+            this.health -= power;
             ctx.beginPath();
             let degrees = 360;
             ctx.arc(a.currX,a.currY,radius,0,degrees.toRads());
             ctx.fillStyle = 'white';
             ctx.fill();
+        }
+
+        this.explode = function() {
+            let a = this;
+            // console.log('ASTEROID WAS HIT BY SHOT!!');
+            // console.log('asteroid centerpoint: ' + a.currX + ', ' + a.currY);
             a.field.destroyAsteroid(a);
             a.field.createDebrisField(a);
         }

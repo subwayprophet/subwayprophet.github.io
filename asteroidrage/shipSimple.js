@@ -200,6 +200,8 @@ export function Ship(radius) {
         this.speed = 8;
         this.direction = direction;
 
+        this.power = 5;
+
         let ctxShot = canvasShot.getContext('2d');
         let canvasShotWidth = canvasShot.width;
         let canvasShotHeight = canvasShot.height;

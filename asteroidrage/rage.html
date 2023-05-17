@@ -10,6 +10,10 @@
         color: white;
         font-size: larger;
     }
+    #highScoreContainer {
+        float: right;
+        padding-right: 2em;
+    }
     body {
         background-color: black;
     }
@@ -19,6 +23,7 @@
     <div class="ui">
         score: <span id="score"></span>
         health: <span id="health"></span>
+        <span id="highScoreContainer">high score: <span id="highScore"></span></span>
     </div>
     <canvas id="canvasBackground" width="1000" height="500" style="z-index: 0; background-color: black"></canvas>
     <canvas id="canvasMain" width="1000" height="500" style="z-index: 1"></canvas>
@@ -50,6 +55,7 @@
         let player = new Player('Zorblebox Grabanini');
         player.setScoreEl(document.querySelector('#score')); //todo: gather these various ui elements into their own class?
         player.setHealthEl(document.querySelector('#health'));
+        player.setHighScoreEl(document.querySelector('#highScore'));
         space.setPlayer(player);
 
         space.createStars();

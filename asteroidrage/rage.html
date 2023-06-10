@@ -18,6 +18,10 @@
     .ui div {
         margin: 5px;
     }
+    .ui .inverse {
+        color: black;
+        background-color: white;
+    }
     #power {
         background-color: green;
         width: 100px;
@@ -27,25 +31,53 @@
         padding-right: 2em;
         margin-left: auto;
     }
+    #highScore {
+        padding-left: 3px;
+    }
     body {
+        background-color: black;
+    }
+    .highest {
+        z-index: 9999999999;
+    }
+    #playerNameInput {
+        width: 100%;
+    }
+    button {
+        font-family: 'popstarregular', sans-serif;
+        width: 100%;
+        padding: 5px;
+    }
+    #startButton {
+        color: white;
         background-color: black;
     }
 </style>
 
 <body>
     <div class="ui">
+        <div class="inverse"><span id="playerName"></span></div>
         <div>score: <span id="score"></span></div>
         <div>health: <span id="health"></span></div>
         <div>power: <span id="power"></span></div>
-        <div id="highScoreContainer">high score: <span id="highScore"></span></div>
+        <div id="highScoreContainer">high score: <span id="highScoreName" class="inverse"></span><span id="highScore"></span></div>
     </div>
     <canvas id="canvasBackground" width="1000" height="500" style="z-index: 0; background-color: black"></canvas>
     <canvas id="canvasMain" width="1000" height="500" style="z-index: 1"></canvas>
     <canvas id="canvasShip" width="1000" height="500" style="z-index: 2"></canvas>
     <canvas id="canvasShot" width="1000" height="500" style="z-index: 3"></canvas>
 
+    <dialog id="startDialog" class="highest" open>
+        <p>Greetings, human! What is your name?</p>
+        <input type="text" id="playerNameInput">
+        <form method="dialog">
+            <button id="startButton" onclick="window.start()">start!</button>
+        </form>
+    </dialog>
+
     <script>
-        
+
+        //initialize canvases
         var canvasBackground = document.getElementById('canvasBackground');
         canvasBackground.width = window.innerWidth;
         canvasBackground.height = window.innerHeight;
@@ -59,32 +91,89 @@
         canvasShot.width = window.innerWidth;
         canvasShot.height = window.innerHeight;
 
+        document.addEventListener('DOMContentLoaded', () => {
+            const HILARIOUS_DEFAULT_PLAYER_NAMES = [
+                'Garblesnort Chobachinsky',
+                'Reetmon Zigglerib',
+                'Megaborg Schlotsfurp',
+                'Bobalee Mikoptic',
+                'Zabadoo Zabadee',
+                'Efflehobbin Korgotson',
+                'Miserflinch Fooflebibblik',
+                'Nobblereeble Zegrunch'
+            ];
+
+            function setRandomHilariousDefaultName() {
+                return HILARIOUS_DEFAULT_PLAYER_NAMES[getRandomIntInclusive(0,HILARIOUS_DEFAULT_PLAYER_NAMES.length-1)];
+            }
+
+            function getRandomIntInclusive(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
+            }
+
+            //set default username for amusement
+            document.querySelector('#playerNameInput').value = setRandomHilariousDefaultName();
+
+            //make start button change colors awesomely
+            let startButtonColorIndex = 0;
+            let everyNFrames = 100;
+            let currFrame = 0;
+            animateStartButton();
+            function animateStartButton() {
+                if(currFrame >= everyNFrames) {
+                    let startButton = document.querySelector('#startButton');
+                    let colors = ['red','orange','blue','indigo','violet'];
+                    if(startButtonColorIndex === colors.length-1) {
+                        startButtonColorIndex = 0;
+                    } else {
+                        startButtonColorIndex++;
+                    }
+                    startButton.style.backgroundColor = colors[startButtonColorIndex];
+                    currFrame = 0;
+                } else {
+                    currFrame++;
+                }
+
+                window.requestAnimationFrame(()=> {
+                    if(!!document.querySelector('#startDialog[open]')) animateStartButton()
+                });
+            }
+
+        });
+
     </script>
 
     <script type="module">
         import{Space} from './space.js';
+        import {Player} from './player.js';
+
         var space = new Space(200,10);
 
-        import {Player} from './player.js';
-        let player = new Player('Zorblebox Grabanini');
-        player.setScoreEl(document.querySelector('#score')); //todo: gather these various ui elements into their own class?
-        player.setHealthEl(document.querySelector('#health'));
-        player.setHighScoreEl(document.querySelector('#highScore'));
-        player.setPowerEl(document.querySelector('#power'));
-        space.setPlayer(player);
+        function start() {
+            let player = new Player(document.querySelector('#playerNameInput').value);
+            player.ui.setScoreEl(document.querySelector('#score')); //todo: gather these various ui elements into their own class?
+            player.ui.setHealthEl(document.querySelector('#health'));
+            player.ui.setHighScoreEl(document.querySelector('#highScore'));
+            player.ui.setHighScoreNameEl(document.querySelector('#highScoreName'));
+            player.ui.setPowerEl(document.querySelector('#power'));
+            player.ui.setPlayerNameEl(document.querySelector('#playerName'));
+            space.setPlayer(player);
 
-        space.createStars();
-        space.letThereBeLight();
-        space.checkCollisions();
+            space.createStars();
+            space.letThereBeLight();
+            space.checkCollisions();
 
-        window.space = space;
+            window.space = space;
 
-
-        window.run = function(input) {
-            eval(input);
+            window.run = function(input) {
+                eval(input);
+            }
         }
 
-    
+        window.start = start;
+
     </script>
 </body>
 </html>

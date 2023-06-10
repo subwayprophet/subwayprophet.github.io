@@ -6,6 +6,10 @@ export function Ship(radius) {
     let canvasHeight = canvasShip.getBoundingClientRect().height;
 
     let ship = this;
+    
+    this.player; //add later...inelegant...
+    
+    this.style = 'blue';
 
     this.x0 = canvasWidth/2;
     this.y0 = canvasHeight/2;
@@ -26,6 +30,11 @@ export function Ship(radius) {
     this.rocketForce = 5;
     this.retroRocketForce = 5;
 
+    this.maxPower = 100; //shared for all systems or just shots? just shots rn 2023-06-10
+    this.currPower = this.maxPower;
+    this.singleShotPower = 5;
+    this.singleTickRechargePower = 0.1;
+
     this.mass = 5; //how much to resist force exerted on the rocket
     this.dragCoefficient = 0; //how much to slow down every tick -- presumably zero for pure vacuum
 
@@ -37,26 +46,45 @@ export function Ship(radius) {
         this.addEventListeners();
     }
 
+    this.situate = function(space) {
+        this.space = space;
+        this.player = space.player;
+        this.player.maxPower = this.currPower;
+    }
+
     this.fly = function() {
         let s = this;
-        //move me
+        //move me..
         s.move();
-        //and each of my shots
+        //..and each of my shots..
         for(let i=0; i<s.shots.length; i++) {
             let shot = s.shots[i];
             shot.move();
         }
+        //..and recharge..
+        this.recharge(this.singleTickRechargePower);
         window.requestAnimationFrame(function() {
             s.fly();
         })
     }
 
+    this.recharge = function(amountToRechargeBy) {
+        if((this.currPower + amountToRechargeBy) > this.maxPower) {
+            this.currPower = this.maxPower;
+        } else {
+            this.currPower += amountToRechargeBy;
+        }
+        this.player.power = this.currPower; //...surely this is inelegant...
+    }
+
     this.fireGun = function() {
+        if(this.currPower < this.singleShotPower) return; //can't shoot if not enough power to shoot
         console.log('firing shot!');
         let s = this;
-        let shot = new Shot(s.currX,s.currY,s.orientation);
+        let shot = new Shot(s.currX,s.currY,s.orientation,s.singleShotPower);
         s.shots.push(shot);
         shot.move();
+        this.currPower -= s.singleShotPower;
     }
 
     this.explode = function() {
@@ -90,33 +118,16 @@ export function Ship(radius) {
     this.draw = function() {
         ctx.clearRect(0,0,canvasWidth,canvasHeight);
         let s = this;
-        let degrees = 360;
         ctx.beginPath();
         if(s.currX > canvasWidth) s.currX = 0;
         if(s.currY > canvasHeight) s.currY = 0;
         if(s.currX < 0) s.currX = canvasWidth;
         if(s.currY < 0) s.currY = canvasHeight;
-        //circle? hard to use
-        //ctx.arc(s.currX,s.currY,radius,0,degrees.toRads());
-        //rectangle? no orientation built in
-        /*
-        let width = radius;
-        let height = radius * 2;
-        let startX = s.currX - width/2;
-        let startY = s.currY - height/2;
-        let rightX = startX + width;
-        let topY = startY + height;
-        ctx.moveTo(startX,startY);
-        ctx.lineTo(startX,topY);
-        ctx.lineTo(rightX,topY);
-        ctx.lineTo(rightX,startY);
-        ctx.lineTo(startX,startY);
-        ctx.fillStyle = 'blue';
-        ctx.fill();
-        */
-        //thick line? using my current orientation? yes!
+
+        //the ship is a triangle!
+        //first draw centerline...
         lineToAngle(ctx,s.currX,s.currY,radius,s.orientation);
-        ctx.strokeStyle = 'blue';
+        ctx.strokeStyle = s.style;
         ctx.lineWidth = 10;
         ctx.stroke();
 
@@ -138,6 +149,9 @@ export function Ship(radius) {
 
     this.rotate = function(degrees) {
         this.orientation += degrees;
+        // ctx.translate(s.currX,s.currY);
+        // ctx.rotate(degrees.toRads());
+        // ctx.translate(-s.currX,-s.currY);
     }
 
     this.speedUp = function() {
@@ -187,7 +201,7 @@ export function Ship(radius) {
         this.draw();
     }
     
-    function Shot(x,y,direction) {
+    function Shot(x,y,direction,power=5) {
         this.x0 = x;
         this.y0 = y;
 
@@ -200,7 +214,7 @@ export function Ship(radius) {
         this.speed = 8;
         this.direction = direction;
 
-        this.power = 5;
+        this.power = power;
 
         let ctxShot = canvasShot.getContext('2d');
         let canvasShotWidth = canvasShot.width;

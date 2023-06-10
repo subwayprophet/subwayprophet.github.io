@@ -19,6 +19,10 @@ export function Space(starCount, planetCount) {
     this.setPlayer = function(player) {
         this.player = player;
         this.player.update();
+        this.ship = new Ship(40);
+        this.ship.create();
+        this.ship.situate(this);
+        this.ship.fly();    
     }
 
     let ctx = canvasBackground.getContext('2d');
@@ -26,11 +30,6 @@ export function Space(starCount, planetCount) {
     var asteroidField = new AsteroidField(Math.floor(Math.random() * 30));
     asteroidField.createAsteroidField();
     asteroidField.moveRandomly();
-
-    var ship = new Ship(40);
-    ship.create();
-    ship.fly();
-
 
     this.createStars = function() {
         let sp = this;
@@ -81,6 +80,7 @@ export function Space(starCount, planetCount) {
             let asteroid = asteroids[i];
             let asteroidX = asteroid.currX;
             let asteroidY = asteroid.currY;
+            let ship = this.ship;
             let shipX = ship.currX;
             let shipY = ship.currY;
             if(!asteroid.isDebris && Math.abs(asteroidX - shipX) < 30 && Math.abs(asteroidY - shipY) < 30) { //todo: get actual bounding shape from ship!

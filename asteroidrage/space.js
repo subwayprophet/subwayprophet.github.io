@@ -27,9 +27,8 @@ export function Space(starCount, planetCount) {
 
     let ctx = canvasBackground.getContext('2d');
 
-    var asteroidField = new AsteroidField(Math.floor(Math.random() * 30));
-    asteroidField.createAsteroidField();
-    asteroidField.moveRandomly();
+    this.asteroidField = new AsteroidField(Math.floor(Math.random() * 30));
+    this.asteroidField.createAsteroidField();
 
     this.createStars = function() {
         let sp = this;
@@ -52,16 +51,29 @@ export function Space(starCount, planetCount) {
         }
     }
 
+    //MAIN GAME LOOP!!!!!!!!!
+    this.tick = function() {
+        let sp = this;
+        sp.player.update();
+        sp.stars.forEach(star => star.twinkle());
+        sp.asteroidField.update();
+        sp.ship.fly();
+        sp.checkCollisions();
+        window.requestAnimationFrame(function() {
+            sp.tick();
+        })
+    }
+
     this.collisionsCounted = 0;
     this.collisionTicks = 0;
     this.checkCollisions = function() {
         let sp = this;
         
         //first remove any objects that should be removed (is this massively efficient??)
-        asteroidField.asteroids = asteroidField.asteroids.filter(a => !a.shouldDisappear());
+        sp.asteroidField.asteroids = sp.asteroidField.asteroids.filter(a => !a.shouldDisappear());
 
         //check for asteroid-ship collisions...
-        let asteroids = asteroidField.asteroids;
+        let asteroids = sp.asteroidField.asteroids;
         let player = this.player;
         for(let i=0; i<asteroids.length; i++) {
 
@@ -112,9 +124,6 @@ export function Space(starCount, planetCount) {
         }
         
         sp.collisionTicks++;
-        window.requestAnimationFrame(function() {
-            sp.checkCollisions();
-        })
     }
 
     function Star(x,y) {
@@ -139,15 +148,12 @@ export function Space(starCount, planetCount) {
             ctx.lineTo(st.x+2,st.y+2); //point?
             ctx.strokeStyle = 'white';
             ctx.stroke();
-            window.requestAnimationFrame(function() {
-                currFrame++;
-                if(currFrame === twinkleFrame) {
-                    ctx.clearRect(st.x,st.y,3,3);
-                    //ctx.clearRect(0,0,width,height);
-                    currFrame = 0;
-                }
-                st.twinkle();
-            })
+            currFrame++;
+            if(currFrame === twinkleFrame) {
+                ctx.clearRect(st.x,st.y,3,3);
+                //ctx.clearRect(0,0,width,height);
+                currFrame = 0;
+            }
         }
 
     }

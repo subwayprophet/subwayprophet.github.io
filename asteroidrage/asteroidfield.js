@@ -31,17 +31,13 @@ export function AsteroidField(asteroidCount) {
         this.debrisFields.push(new DebrisField(sourceAsteroid.currX,sourceAsteroid.currY,sourceAsteroid.radius,this))
     }
 
-    this.moveRandomly = function() {
+    this.update = function() {
         let af = this;
         ctx.clearRect(0,0,width,height);
         for(let i=0; i<af.asteroids.length; i++) {
             let asteroid = af.asteroids[i];
             asteroid.move();
         }
-        //this.debrisFields.forEach(df => df.move());
-        window.requestAnimationFrame(function() {
-            af.moveRandomly();
-        })
     }
 
 function Asteroid(radius,field) {

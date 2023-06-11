@@ -163,7 +163,9 @@
 
             space.createStars();
             space.letThereBeLight();
-            space.checkCollisions();
+
+            //kick of the main game loop!
+            space.tick();
 
             window.space = space;
 

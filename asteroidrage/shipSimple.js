@@ -63,9 +63,6 @@ export function Ship(radius) {
         }
         //..and recharge..
         this.recharge(this.singleTickRechargePower);
-        window.requestAnimationFrame(function() {
-            s.fly();
-        })
     }
 
     this.recharge = function(amountToRechargeBy) {
@@ -277,13 +274,13 @@ export function Ship(radius) {
                 s.fireRocket();
                 break;
               case "Left": // IE/Edge specific value
-              case "ArrowLeft":
+                case "ArrowLeft":
                 // Do something for "left arrow" key press.
                 if(!s.holdingDownKeys['ArrowLeft']) {
                     s.holdingDownKeys['ArrowLeft'] = true;
                     holdDownArrowLeft();
                 }
-                //actually this needs to run every frame until we get a keyup
+                //actually this needs to run every frame until we get a keyup.....really?
                 function holdDownArrowLeft() {
                     s.rotate(-4);
                     if(s.holdingDownKeys['ArrowLeft']) {

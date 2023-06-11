@@ -81,9 +81,6 @@ export function Player(name) {
         p.ui.highScoreEl.innerText = p.highScore;
         p.ui.renderPower(this.power,this.maxPower);
         p.checkHighScore();
-        window.requestAnimationFrame(function() {
-            p.update();
-        })
     }
 
     this.checkHighScore = function() {

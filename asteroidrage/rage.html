@@ -76,7 +76,6 @@
     </dialog>
 
     <script>
-
         //initialize canvases
         var canvasBackground = document.getElementById('canvasBackground');
         canvasBackground.width = window.innerWidth;
@@ -149,11 +148,12 @@
         import{Space} from './space.js';
         import {Player} from './player.js';
 
+        //space should exist right away -- but actual game doesn't start until player says so
         var space = new Space(200,10);
 
         function start() {
             let player = new Player(document.querySelector('#playerNameInput').value);
-            player.ui.setScoreEl(document.querySelector('#score')); //todo: gather these various ui elements into their own class?
+            player.ui.setScoreEl(document.querySelector('#score'));
             player.ui.setHealthEl(document.querySelector('#health'));
             player.ui.setHighScoreEl(document.querySelector('#highScore'));
             player.ui.setHighScoreNameEl(document.querySelector('#highScoreName'));
@@ -167,13 +167,37 @@
 
             window.space = space;
 
+            //kick off sound when game starts! hooray!
+            playSound();
+
             window.run = function(input) {
                 eval(input);
             }
         }
 
         window.start = start;
-
     </script>
+
+    <script src="lib/band.min.js"></script>
+    <script src="sound.js"></script>
+    <script>
+
+        let currTrackIndex = 1;
+        let trackNames = ['track1','track2'];
+        function playSound(trackIndex=currTrackIndex) {
+            let sound = new Sound();
+            let player = sound.play(trackNames[trackIndex]);
+            setTimeout(() => {
+                player.stop();
+                if(currTrackIndex >= trackNames.length-1) {
+                    currTrackIndex = 0;
+                } else {
+                    currTrackIndex++;
+                }
+                playSound();
+            },20000)
+        }
+    </script>
+
 </body>
 </html>

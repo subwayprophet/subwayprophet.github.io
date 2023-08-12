@@ -1,4 +1,5 @@
 import {canvasShip,canvasShot,lineToAngle} from './canvas.js';
+import {soundLaser, soundRocket} from './sound.js';
 
 export function Ship(radius) {
     let ctx = canvasShip.getContext('2d');
@@ -6,7 +7,7 @@ export function Ship(radius) {
     let canvasHeight = canvasShip.getBoundingClientRect().height;
 
     let ship = this;
-    
+
     this.player; //add later...inelegant...
     
     this.style = 'blue';
@@ -18,7 +19,7 @@ export function Ship(radius) {
     this.currY = this.y0;
 
     this.prevX = this.currX;
-    this.prevY = this.prevY;
+    this.prevY = this.currY;
 
     this.orientation = -90;
     this.direction = -90; //initialize to same as orientation; change later based on forces
@@ -82,6 +83,7 @@ export function Ship(radius) {
         s.shots.push(shot);
         shot.move();
         this.currPower -= s.singleShotPower;
+        soundLaser();
     }
 
     this.explode = function() {
@@ -98,6 +100,7 @@ export function Ship(radius) {
     this.fireRocket = function() {
         this.speedUp(this.rocketForce);
         this.rocketFiring = true;
+        soundRocket();
     }
     this.fireRetroRocket = function() {
         this.slowDown(this.retroRocketForce);

@@ -1,6 +1,7 @@
 import {canvas} from './canvas.js';
 import {getRandomIntInclusive} from './canvas.js';
 import {pickRandomColor} from './canvas.js';
+import {soundExplosion} from "./sound.js";
 
 export function AsteroidField(asteroidCount) {
     this.asteroidCount = asteroidCount;
@@ -102,6 +103,7 @@ function Asteroid(radius,field) {
             // console.log('asteroid centerpoint: ' + a.currX + ', ' + a.currY);
             a.field.destroyAsteroid(a);
             a.field.createDebrisField(a);
+            soundExplosion();
         }
     
         this.draw = function() {

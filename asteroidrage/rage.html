@@ -170,7 +170,7 @@
             window.space = space;
 
             //kick off sound when game starts! hooray!
-            playSound();
+            playMusic();
 
             window.run = function(input) {
                 eval(input);
@@ -181,14 +181,14 @@
     </script>
 
     <script src="lib/band.min.js"></script>
-    <script src="sound.js"></script>
+    <script src="music.js"></script>
     <script>
 
         let currTrackIndex = 1;
         let trackNames = ['track1','track2'];
-        function playSound(trackIndex=currTrackIndex) {
-            let sound = new Sound();
-            let player = sound.play(trackNames[trackIndex]);
+        function playMusic(trackIndex=currTrackIndex) {
+            let music = new Music();
+            let player = music.play(trackNames[trackIndex]);
             setTimeout(() => {
                 player.stop();
                 if(currTrackIndex >= trackNames.length-1) {
@@ -196,7 +196,7 @@
                 } else {
                     currTrackIndex++;
                 }
-                playSound();
+                playMusic();
             },20000)
         }
     </script>

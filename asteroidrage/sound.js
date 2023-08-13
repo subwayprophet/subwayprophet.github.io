@@ -25,6 +25,7 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 export function soundRocket() {
     const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain(); // Create a gain node for volume control
     oscillator.type = 'square'; // You can use other waveform types like 'sawtooth', 'square', 'triangle'
 
     const initialFrequency = 80; // Starting frequency in Hz (A4 note)
@@ -34,8 +35,10 @@ export function soundRocket() {
     const startTime = audioContext.currentTime;
 
     oscillator.frequency.setValueAtTime(initialFrequency, startTime);
+    gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
 
-    oscillator.connect(audioContext.destination);
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
     oscillator.start();
     oscillator.frequency.linearRampToValueAtTime(targetFrequency, startTime + slideDuration);
 

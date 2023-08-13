@@ -1,6 +1,7 @@
 class Music {
     play(trackName) {
         let conductor = new BandJS();
+        conductor.setMasterVolume(40);
         let player = conductor.load(tracks[trackName])
         player.looping = true;
         player.play();

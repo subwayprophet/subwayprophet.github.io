@@ -12,6 +12,7 @@ export function AsteroidField(asteroidCount) {
     let height = canvas.getBoundingClientRect().height;
 
     this.radius = 50;
+    this.minAsteroidSize = 20;
 
     this.createAsteroidField = function() {
         this.createAsteroids(this.asteroidCount)
@@ -19,7 +20,7 @@ export function AsteroidField(asteroidCount) {
     this.createAsteroids = function(count) {
         let af = this;
         for(let i=0; i<count; i++) {
-            let radius = af.radius * Math.random();
+            let radius = Math.max(af.radius * Math.random(),this.minAsteroidSize);
             let asteroid = new Asteroid(radius,af);
             af.asteroids.push(asteroid);
             asteroid.draw();
@@ -60,7 +61,7 @@ function Asteroid(radius,field) {
         this.field = field;
 
         this.orientation = getRandomIntInclusive(0,360);
-        this.speed = Math.random() * 10; //aka movement vector magnitude aka hypotneuse length
+        this.speed = getRandomIntInclusive(1,5); //aka movement vector magnitude aka hypotneuse length
 
         this.currX = this.x0;
         this.currY = this.y0;

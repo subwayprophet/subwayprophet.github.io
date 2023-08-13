@@ -1,6 +1,7 @@
 import {canvasBackground, getRandomIntInclusive, pickRandomColor} from './canvas.js'
 import {AsteroidField} from './asteroidfield.js';
 import {Ship} from './ship.js';
+import {DynamicMusic} from "./musicDynamic.js";
 
 const MAX_COLLISIONS_PER_TICKINTERVAL = 100;
 const TICKS_PER_TICKINTERVAL = 5;
@@ -14,6 +15,8 @@ export function Space(starCount, planetCount) {
 
     this.stars = [];
     this.planets = [];
+
+    this.dynamicMusic;
 
     this.player;
     this.setPlayer = function(player) {
@@ -64,6 +67,8 @@ export function Space(starCount, planetCount) {
             let planet = this.planets[i];
             planet.exist();
         }
+        this.dynamicMusic = new DynamicMusic(this);
+        this.dynamicMusic.play();
     }
 
     //MAIN GAME LOOP!!!!!!!!!
@@ -139,8 +144,9 @@ export function Space(starCount, planetCount) {
             // })
         }
         //add some more asteroids if we're running low
-        if(asteroids.length < 10) {
-            sp.asteroidField.createAsteroids(10);
+        if(asteroids.length < 5) {
+            sp.asteroidField.createAsteroids(5);
+            this.dynamicMusic.playBling();
         }
         
         sp.collisionTicks++;

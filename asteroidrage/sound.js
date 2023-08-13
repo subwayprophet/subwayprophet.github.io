@@ -56,3 +56,12 @@ export function soundExplosion() {
     oscillator.start();
     oscillator.stop(audioContext.currentTime + 0.4); // Stop after 0.1 seconds
 }
+
+export function beep(hz) {
+    const oscillator = audioContext.createOscillator();
+    oscillator.type = 'sine'; // You can use other waveform types like 'sawtooth', 'square', 'triangle'
+    oscillator.frequency.setValueAtTime(hz, audioContext.currentTime); // Frequency in Hz (A4 note)
+    oscillator.connect(audioContext.destination);
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.2); // Stop after 0.1 seconds
+}

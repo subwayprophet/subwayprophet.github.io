@@ -1,11 +1,21 @@
 class Music {
+    constructor() {
+        this.conductor = new BandJS();
+    }
+    conductor;
+    player;
     play(trackName) {
-        let conductor = new BandJS();
-        conductor.setMasterVolume(40);
-        let player = conductor.load(tracks[trackName])
-        player.looping = true;
-        player.play();
-        return player;
+        this.player = this.conductor.load(tracks[trackName])
+        this.conductor.setMasterVolume(30);
+        this.player.looping = true;
+        this.player.play();
+        return this.player;
+    }
+    stop(fadeOut) {
+        this.player.stop(fadeOut);
+    }
+    unstop() {
+        this.player.play();
     }
     playZ() {
         let conductor = new BandJS();

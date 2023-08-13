@@ -27,6 +27,15 @@
         width: 100px;
         display: inline-flex;
     }
+    #music {
+        background-color: white;
+        border-radius: 3px;
+        padding: 3px;
+        box-shadow: 0px 0px 5px 0px white;
+    }
+    #music:hover {
+        cursor: pointer;
+    }
     #highScoreContainer {
         padding-right: 2em;
         margin-left: auto;
@@ -60,7 +69,9 @@
         <div>score: <span id="score"></span></div>
         <div>health: <span id="health"></span></div>
         <div>power: <span id="power"></span></div>
-        <div id="highScoreContainer">high score: <span id="highScoreName" class="inverse"></span><span id="highScore"></span></div>
+        <div id="highScoreContainer">
+            <span id="music" onclick="toggleMusic()">&#127925;</span>
+            high score: <span id="highScoreName" class="inverse"></span><span id="highScore"></span></div>
     </div>
     <canvas id="canvasBackground" width="1000" height="500" style="z-index: 0; background-color: black"></canvas>
     <canvas id="canvasMain" width="1000" height="500" style="z-index: 1"></canvas>
@@ -151,6 +162,8 @@
         //space should exist right away -- but actual game doesn't start until player says so
         var space = new Space(200,10);
 
+        let isMusicPlaying = false;
+
         function start() {
             let player = new Player(document.querySelector('#playerNameInput').value);
             player.ui.setScoreEl(document.querySelector('#score'));
@@ -170,14 +183,29 @@
             window.space = space;
 
             //kick off sound when game starts! hooray!
+            isMusicPlaying = true;
             playMusic();
+
 
             window.run = function(input) {
                 eval(input);
             }
         }
 
+        function toggleMusic() {
+            if(isMusicPlaying) {
+                isMusicPlaying = false;
+                document.querySelector('#music').style.backgroundColor = 'darkgrey';
+                stopMusic();
+            } else {
+                isMusicPlaying = true;
+                document.querySelector('#music').style.backgroundColor = 'white';
+                unstopMusic();
+            }
+        }
+
         window.start = start;
+        window.toggleMusic = toggleMusic;
     </script>
 
     <script src="lib/band.min.js"></script>
@@ -186,11 +214,13 @@
 
         let currTrackIndex = 1;
         let trackNames = ['track1','track2'];
+        let isMusicPlaying = true;
+        let music = new Music();
         function playMusic(trackIndex=currTrackIndex) {
-            let music = new Music();
             let player = music.play(trackNames[trackIndex]);
+            if(!isMusicPlaying) music.stop(false);
             setTimeout(() => {
-                player.stop();
+                player.stop(false);
                 if(currTrackIndex >= trackNames.length-1) {
                     currTrackIndex = 0;
                 } else {
@@ -198,6 +228,15 @@
                 }
                 playMusic();
             },20000)
+        }
+
+        function stopMusic() {
+            isMusicPlaying = false;
+            music.stop(false)
+        }
+        function unstopMusic() {
+            isMusicPlaying = true;
+            music.unstop();
         }
     </script>
 

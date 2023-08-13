@@ -65,7 +65,10 @@ function Asteroid(radius,field) {
         this.prevX = this.currX;
         this.prevY = this.currY;
 
-        this.color = 'white'
+        this.color = 'white';
+        // this.isFancy = Math.random() > 0.7; //todo: improve performance so this doesn't slow everything down horribly
+        this.isFancy = false
+
 
         this.ticksLifespan = 500; //how many ticks before this asteroid maybe disappears?
         this.ticksLived = 0; //how many ticks has this asteroid lived?
@@ -112,15 +115,29 @@ function Asteroid(radius,field) {
                 this.field.destroyAsteroid(this);
                 return;
             }
+
             let degrees = 360;
             ctx.beginPath();
             if(a.currX > width) a.currX = 0;
             if(a.currY > height) a.currY = 0;
             if(a.currX < 0) a.currX = width;
             if(a.currY < 0) a.currY = height;
-            ctx.arc(a.currX,a.currY,radius,0,degrees.toRads());
-            ctx.strokeStyle = this.color;
-            ctx.stroke();
+
+            if(this.isFancy) {
+                //this looks cool but is too slow -- need to optimize
+                const gradient = ctx.createRadialGradient(a.currX,a.currY,0,a.currX,a.currY,a.radius);
+                gradient.addColorStop(0, this.color);
+                gradient.addColorStop(1, 'black');
+                ctx.fillStyle = gradient;
+                ctx.arc(a.currX,a.currY,radius,0,degrees.toRads());
+                ctx.fill();
+            } else {
+                //boring but more performant -- but surely this is an issue just because my code is colossally inefficient
+                ctx.arc(a.currX,a.currY,radius,0,degrees.toRads());
+                ctx.strokeStyle = this.color;
+                ctx.stroke();
+            }
+
         }
 
         this.move = function() {

@@ -108,9 +108,12 @@ export function Ship(radius) {
     }
     this.drawRocketFire = function() {
         let s = this;
+        //offset the rocket fire from the center of the ship
+        let x = s.currX - (radius*0.5 * Math.cos(s.orientation.toRads()));
+        let y = s.currY - (radius*0.5 * Math.sin(s.orientation.toRads()));
         ctx.beginPath();
         let degrees = 360;
-        ctx.arc(s.currX,s.currY,20,0,degrees.toRads());
+        ctx.arc(x,y,20,0,degrees.toRads());
         ctx.fillStyle = '#f00';
         ctx.fill();
     }
@@ -127,8 +130,13 @@ export function Ship(radius) {
         //the ship is a triangle!
         //first draw centerline...
         lineToAngle(ctx,s.currX,s.currY,radius,s.orientation);
+        //then draw left side...
+        lineToAngle(ctx,s.currX,s.currY,radius*0.5,s.orientation+140);
+        //then draw right side...
+        lineToAngle(ctx,s.currX,s.currY,radius*0.5,s.orientation-140);
+
         ctx.strokeStyle = s.style;
-        ctx.lineWidth = 10;
+        ctx.lineWidth = 15;
         ctx.stroke();
 
         //draw rocket fire if firing rockets

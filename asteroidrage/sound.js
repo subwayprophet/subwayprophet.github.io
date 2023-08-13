@@ -57,11 +57,17 @@ export function soundExplosion() {
     oscillator.stop(audioContext.currentTime + 0.4); // Stop after 0.1 seconds
 }
 
-export function beep(hz) {
+export function beep(hz,volume=0.5) {
     const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain(); // Create a gain node for volume control
     oscillator.type = 'sine'; // You can use other waveform types like 'sawtooth', 'square', 'triangle'
+
     oscillator.frequency.setValueAtTime(hz, audioContext.currentTime); // Frequency in Hz (A4 note)
-    oscillator.connect(audioContext.destination);
+    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+
+    gainNode.connect(audioContext.destination);
+    oscillator.connect(gainNode);
+
     oscillator.start();
     oscillator.stop(audioContext.currentTime + 0.2); // Stop after 0.1 seconds
 }

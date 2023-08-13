@@ -37,7 +37,7 @@ export class DynamicMusic {
             clearInterval(loop);
             let newInterval = dm.calculatedInterval;
             dm.interval = newInterval;
-            beep(dm.pitch);
+            beep(dm.pitch,0.2);
             dm.play();
         }, dm.interval);
     }

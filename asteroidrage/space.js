@@ -177,18 +177,42 @@ export function Space(starCount, planetCount) {
         constructor(x,y) {
             this.x = x;
             this.y = y;
+            this.hasRings = Math.random() > 0.7;
         }
+        hasRings;
         exist = function() {
             let pl = this;
+            const color = pickRandomColor();
             const radius = getRandomIntInclusive(2,12);
             const gradient = ctx.createRadialGradient(pl.x,pl.y,0,pl.x,pl.y,radius);
-            gradient.addColorStop(0, pickRandomColor());
+            gradient.addColorStop(0, color);
             gradient.addColorStop(1, 'black');
 
             ctx.beginPath();
             ctx.arc(pl.x,pl.y,radius,0,Math.PI*2);
             ctx.fillStyle = gradient
             ctx.fill();
+
+            if(pl.hasRings) {
+                ctx.beginPath();
+                ctx.arc(pl.x,pl.y,radius+2,0,Math.PI*2);
+                ctx.strokeStyle = color;
+                ctx.stroke();
+                //draw another concentric ring...
+                if(Math.random() > 0.5) {
+                    ctx.beginPath();
+                    ctx.arc(pl.x,pl.y,radius+4,0,Math.PI*2);
+                    ctx.strokeStyle = 'white';
+                    ctx.stroke();
+                    if(Math.random() > 0.5) {
+                        ctx.beginPath();
+                        ctx.arc(pl.x,pl.y,radius+6,0,Math.PI*2);
+                        ctx.strokeStyle = color;
+                        ctx.stroke();
+                    }
+                }
+
+            }
         }
     }
 

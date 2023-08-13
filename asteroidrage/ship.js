@@ -146,10 +146,10 @@ export function Ship(radius) {
         //the ship is a triangle!
         //first draw centerline...
         lineToAngle(ctx,s.currX,s.currY,radius,s.orientation);
-        //then draw left side...
-        lineToAngle(ctx,s.currX,s.currY,radius*0.5,s.orientation+140);
         //then draw right side...
-        lineToAngle(ctx,s.currX,s.currY,radius*0.5,s.orientation-140);
+        lineToAngle(ctx,s.currX,s.currY,radius*0.8,s.orientation-140);
+        //then draw left side...
+        lineToAngle(ctx,s.currX,s.currY,radius*0.8,s.orientation+140);
 
         ctx.strokeStyle = s.style;
         ctx.lineWidth = 15;

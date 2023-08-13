@@ -81,6 +81,7 @@ export function Player(name) {
         p.ui.highScoreEl.innerText = p.highScore;
         p.ui.renderPower(this.power,this.maxPower);
         p.checkHighScore();
+        p.maybeDie();
     }
 
     this.checkHighScore = function() {
@@ -108,6 +109,11 @@ export function Player(name) {
         }
     }
 
+    this.maybeDie = function() {
+        if(this.health <= 0) {
+            this.ui.healthEl.style.color = 'red';
+        }
+    }
 
 
 

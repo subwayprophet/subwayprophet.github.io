@@ -14,8 +14,11 @@ export function AsteroidField(asteroidCount) {
     this.radius = 50;
 
     this.createAsteroidField = function() {
+        this.createAsteroids(this.asteroidCount)
+    }
+    this.createAsteroids = function(count) {
         let af = this;
-        for(let i=0; i<af.asteroidCount; i++) {
+        for(let i=0; i<count; i++) {
             let radius = af.radius * Math.random();
             let asteroid = new Asteroid(radius,af);
             af.asteroids.push(asteroid);

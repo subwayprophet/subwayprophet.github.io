@@ -27,7 +27,7 @@ export function Space(starCount, planetCount) {
 
     let ctx = canvasBackground.getContext('2d');
 
-    this.asteroidField = new AsteroidField(Math.floor(Math.random() * 30));
+    this.asteroidField = new AsteroidField(getRandomIntInclusive(10,11));
     this.asteroidField.createAsteroidField();
 
     this.createStars = function() {
@@ -138,6 +138,10 @@ export function Space(starCount, planetCount) {
             //     }
             // })
         }
+        //add some more asteroids if we're running low
+        if(asteroids.length < 10) {
+            sp.asteroidField.createAsteroids(10);
+        }
         
         sp.collisionTicks++;
     }
@@ -188,6 +192,7 @@ export function Space(starCount, planetCount) {
             gradient.addColorStop(0, color);
             gradient.addColorStop(1, 'black');
 
+            //actually draw planet
             ctx.beginPath();
             ctx.arc(pl.x,pl.y,radius,0,Math.PI*2);
             ctx.fillStyle = gradient

@@ -1,6 +1,6 @@
-import {canvasBackground, getRandomIntInclusive} from './canvas.js'
+import {canvasBackground, getRandomIntInclusive, pickRandomColor} from './canvas.js'
 import {AsteroidField} from './asteroidfield.js';
-import {Ship} from './shipSimple.js';
+import {Ship} from './ship.js';
 
 const MAX_COLLISIONS_PER_TICKINTERVAL = 100;
 const TICKS_PER_TICKINTERVAL = 5;
@@ -41,6 +41,17 @@ export function Space(starCount, planetCount) {
             starsCreated++;
         }
     }
+    this.createPlanets = function() {
+        let sp = this;
+        let planetsCreated = 0;
+        while(planetsCreated < this.planetCount) {
+            let x = Math.random() * width;
+            let y = Math.random() * height;
+            let planet = new Planet(x,y);
+            sp.planets.push(planet);
+            planetsCreated++;
+        }
+    }
 
     this.letThereBeLight = function() {
         let sp = this;
@@ -48,6 +59,10 @@ export function Space(starCount, planetCount) {
             let star = this.stars[i];
             //star.shine();
             star.twinkle();
+        }
+        for(let i=0; i<this.planets.length; i++) {
+            let planet = this.planets[i];
+            planet.exist();
         }
     }
 
@@ -155,7 +170,25 @@ export function Space(starCount, planetCount) {
                 currFrame = 0;
             }
         }
+    }
 
+    class Planet {
+        constructor(x,y) {
+            this.x = x;
+            this.y = y;
+        }
+        exist = function() {
+            let pl = this;
+            const radius = getRandomIntInclusive(2,12);
+            const gradient = ctx.createRadialGradient(pl.x,pl.y,0,pl.x,pl.y,radius);
+            gradient.addColorStop(0, pickRandomColor());
+            gradient.addColorStop(1, 'black');
+
+            ctx.beginPath();
+            ctx.arc(pl.x,pl.y,radius,0,Math.PI*2);
+            ctx.fillStyle = gradient
+            ctx.fill();
+        }
     }
 
 }

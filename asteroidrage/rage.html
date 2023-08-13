@@ -160,7 +160,7 @@
         import {Player} from './player.js';
 
         //space should exist right away -- but actual game doesn't start until player says so
-        var space = new Space(200,10);
+        var space = new Space(200,30);
 
         let isMusicPlaying = false;
 
@@ -175,6 +175,7 @@
             space.setPlayer(player);
 
             space.createStars();
+            space.createPlanets();
             space.letThereBeLight();
 
             //kick of the main game loop!

@@ -87,7 +87,6 @@ export function Space(starCount, planetCount) {
         //first remove any objects that should be removed (is this massively efficient??)
         sp.asteroidField.asteroids = sp.asteroidField.asteroids.filter(a => !a.shouldDisappear());
 
-        //check for asteroid-ship collisions...
         let asteroids = sp.asteroidField.asteroids;
         let player = this.player;
         for(let i=0; i<asteroids.length; i++) {
@@ -107,6 +106,8 @@ export function Space(starCount, planetCount) {
             let asteroid = asteroids[i];
             let asteroidX = asteroid.currX;
             let asteroidY = asteroid.currY;
+
+            //check for asteroid-ship collisions...
             let ship = this.ship;
             let shipX = ship.currX;
             let shipY = ship.currY;

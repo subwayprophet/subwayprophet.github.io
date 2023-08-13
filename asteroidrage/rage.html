@@ -116,6 +116,9 @@
             function setRandomHilariousDefaultName() {
                 return HILARIOUS_DEFAULT_PLAYER_NAMES[getRandomIntInclusive(0,HILARIOUS_DEFAULT_PLAYER_NAMES.length-1)];
             }
+            function setRandomizedDefaultName() {
+                return window.generateRandomName();
+            }
 
             function getRandomIntInclusive(min, max) {
                 min = Math.ceil(min);
@@ -124,7 +127,8 @@
             }
 
             //set default username for amusement
-            document.querySelector('#playerNameInput').value = setRandomHilariousDefaultName();
+            // document.querySelector('#playerNameInput').value = setRandomHilariousDefaultName();
+            document.querySelector('#playerNameInput').value = setRandomizedDefaultName();
 
             //make start button change colors awesomely
             let startButtonColorIndex = 0;
@@ -158,6 +162,8 @@
     <script type="module">
         import{Space} from './space.js';
         import {Player} from './player.js';
+        import {generateName} from "./language.js";
+        import {getRandomIntInclusive} from "./canvas.js";
 
         //space should exist right away -- but actual game doesn't start until player says so
         var space = new Space(200,30);
@@ -205,8 +211,13 @@
             }
         }
 
+        function generateRandomName() {
+            return generateName(getRandomIntInclusive(4,10)) + ' ' + generateName(getRandomIntInclusive(4,10));
+        }
+
         window.start = start;
         window.toggleMusic = toggleMusic;
+        window.generateRandomName = generateRandomName;
     </script>
 
     <script src="lib/band.min.js"></script>

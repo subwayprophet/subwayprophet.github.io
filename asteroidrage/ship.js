@@ -1,5 +1,5 @@
 import {canvasShip,canvasShot,lineToAngle} from './canvas.js';
-import {soundLaser, soundRocket} from './sound.js';
+import {soundLaser, soundExplosion, soundBling} from './sound.js';
 
 export function Ship(radius) {
     let ctx = canvasShip.getContext('2d');
@@ -72,6 +72,10 @@ export function Ship(radius) {
         } else {
             this.currPower += amountToRechargeBy;
         }
+        //sound cool if power is now full
+        if(this.player.power < this.currPower && this.currPower >= this.maxPower) {
+            soundBling();
+        }
         this.player.power = this.currPower; //...surely this is inelegant...
     }
 
@@ -100,7 +104,7 @@ export function Ship(radius) {
     this.fireRocket = function() {
         this.speedUp(this.rocketForce);
         this.rocketFiring = true;
-        soundRocket();
+        soundExplosion(60);
     }
     this.fireRetroRocket = function() {
         this.slowDown(this.retroRocketForce);

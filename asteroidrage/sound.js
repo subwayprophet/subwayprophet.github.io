@@ -23,7 +23,7 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
      oscillator.stop(startTime + slideDuration + 0.1); // Add a small additional time for a smooth stop
 }
 
-export function soundRocket() {
+export function soundBling() {
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain(); // Create a gain node for volume control
     oscillator.type = 'square'; // You can use other waveform types like 'sawtooth', 'square', 'triangle'
@@ -46,12 +46,12 @@ export function soundRocket() {
     oscillator.stop(startTime + slideDuration + 0.1); // Add a small additional time for a smooth stop
 }
 
-export function soundExplosion() {
+export function soundExplosion(pitch=30) {
     const oscillator = audioContext.createOscillator();
 
 // Configure the oscillator
     oscillator.type = 'sine'; // You can use other waveform types like 'sawtooth', 'square', 'triangle'
-    oscillator.frequency.setValueAtTime(30, audioContext.currentTime); // Frequency in Hz (A4 note)
+    oscillator.frequency.setValueAtTime(pitch, audioContext.currentTime); // Frequency in Hz (A4 note)
     oscillator.connect(audioContext.destination);
     oscillator.start();
     oscillator.stop(audioContext.currentTime + 0.4); // Stop after 0.1 seconds

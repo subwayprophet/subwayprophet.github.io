@@ -1,4 +1,4 @@
-import {beep, soundRocket} from "./sound.js";
+import {beep, soundBling} from "./sound.js";
 
 export class DynamicMusic {
     constructor(space) {
@@ -43,7 +43,7 @@ export class DynamicMusic {
     }
 
     playBling = function() {
-        soundRocket();
+        soundBling();
     }
 
 }

@@ -111,11 +111,27 @@ export function Ship(radius) {
         //offset the rocket fire from the center of the ship
         let x = s.currX - (radius*0.5 * Math.cos(s.orientation.toRads()));
         let y = s.currY - (radius*0.5 * Math.sin(s.orientation.toRads()));
+        //first large circle flame...
         ctx.beginPath();
         let degrees = 360;
         ctx.arc(x,y,20,0,degrees.toRads());
         ctx.fillStyle = '#f00';
         ctx.fill();
+        //then smaller circle flame, offset a bit more...
+        let x2 = x - (radius*0.5 * Math.cos(s.orientation.toRads()));
+        let y2 = y - (radius*0.5 * Math.sin(s.orientation.toRads()));
+        ctx.beginPath();
+        ctx.arc(x2,y2,10,0,degrees.toRads());
+        ctx.fillStyle = '#ff0';
+        ctx.fill();
+        //then even smaller circle flame, offset a bit more...
+        let x3 = x2 - (radius*0.5 * Math.cos(s.orientation.toRads()));
+        let y3 = y2 - (radius*0.5 * Math.sin(s.orientation.toRads()));
+        ctx.beginPath();
+        ctx.arc(x3,y3,5,0,degrees.toRads());
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+
     }
 
     this.draw = function() {

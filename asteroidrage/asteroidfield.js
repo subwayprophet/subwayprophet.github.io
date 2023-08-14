@@ -70,8 +70,8 @@ function Asteroid(radius,field) {
         this.prevY = this.currY;
 
         this.color = 'white';
-        // this.isFancy = Math.random() > 0.7; //todo: improve performance so this doesn't slow everything down horribly
-        this.isFancy = false
+        // this.isFancy = Math.random() > 0.7; //todo: improve performance so this doesn't slow everything down horribly...is it acceptable now???
+        this.isFancy = true
 
 
         this.ticksLifespan = 500; //how many ticks before this asteroid maybe disappears?

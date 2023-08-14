@@ -31,15 +31,20 @@ export class DynamicMusic {
         let ratioRemaining = realAsteroidsRemaining / this.space.asteroidField.asteroidCount;
         return this.baseInterval * ratioRemaining;
     }
+    loop;
     play = function() {
         let dm = this;
-        let loop = setInterval(() => {
-            clearInterval(loop);
+        dm.loop = setInterval(() => {
+            clearInterval(dm.loop);
             let newInterval = dm.calculatedInterval;
             dm.interval = newInterval;
             beep(dm.pitch,0.2);
             dm.play();
         }, dm.interval);
+    }
+
+    stop = function() {
+        clearInterval(this.loop);
     }
 
     playBling = function() {

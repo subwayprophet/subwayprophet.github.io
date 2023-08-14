@@ -245,5 +245,45 @@ const tracks = {
                 'eighth|G2'
             ]
         }
-    }
+    },
+    funeral: {
+        timeSignature: [4, 4],
+        tempo: 60,
+        instruments: {
+            melody: {
+                name: 'square',
+                pack: 'oscillators'
+            },
+            harmony: {
+                name: 'sawtooth',
+                pack: 'oscillators'
+            }
+        },
+        notes: {
+            // Shorthand notation
+            melody: [
+                //bar 1
+                'quarter|A3',
+                'quarter|A3',
+                'quarter|A3',
+                'quarter|C4',
+                //bar 2
+                'quarter|B3',
+                'quarter|A3',
+                'half|A4'
+            ],
+            harmony: [
+                //bar 1
+                'quarter|A3',
+                'quarter|F2',
+                'quarter|A2',
+                'quarter|F2',
+                //bar 2
+                'quarter|A3',
+                'quarter|F2',
+                'quarter|A2',
+                'quarter|F2'
+            ]
+        }
+    },
 }

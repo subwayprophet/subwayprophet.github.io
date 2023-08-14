@@ -168,12 +168,12 @@ export function Space(starCount, planetCount) {
     }
 
     //also init static music, at least for now -- does this really belong here, though?
-    this.currTrackIndex = 1;
+    this.currTrackIndex = 0;
     this.trackNames = ['track1','track2'];
     this.isMusicPlaying = false;
-    this.playMusic = function(trackIndex=this.currTrackIndex) {
+    this.playMusic = function(trackName='track1') {
         let sp = this;
-        let player = sp.staticMusic.play(sp.trackNames[trackIndex]);
+        let player = sp.staticMusic.play(trackName);
         if(!sp.isMusicPlaying) sp.staticMusic.stop(false);
         setTimeout(() => {
             player.stop(false);
@@ -182,7 +182,7 @@ export function Space(starCount, planetCount) {
             } else {
                 sp.currTrackIndex++;
             }
-            sp.playMusic();
+            sp.playMusic(sp.trackNames[sp.currTrackIndex]);
         },10000)
     }
     this.stopMusic = function() {

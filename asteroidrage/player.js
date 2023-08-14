@@ -73,7 +73,7 @@ export function Player(name) {
     this.name = name;
     this.score = 0;
 
-    this.health = 10;
+    this.health = 100;
     this.power = 0; //init; ship should reset this on tick
     this.maxPower = 100; //default, but ship should set this on ship init
     
@@ -131,6 +131,9 @@ export function Player(name) {
 
     this.die = function() {
         this.space.end();
+        this.space.trackNames = ['funeral']
+        this.space.playMusic('funeral');
+        this.space.dynamicMusic.stop();
         this.ui.oldPlayerNameEl.innerText = name;
         this.ui.gameOverEl.show();
     }

@@ -6,8 +6,10 @@ class UI {
         this.scoreEl = el;
     }
     healthEl;
+    healthElInitialWidth;
     setHealthEl = function(el) {
         this.healthEl = el;
+        this.healthElInitialWidth = this.healthEl.offsetWidth;
     }
     highScoreEl;
     setHighScoreEl = function(el) {
@@ -57,6 +59,26 @@ class UI {
             ui.powerEl.style.color = 'white';
         }
     }
+    renderHealth = function(currHealth,maxHealth) {
+let ui = this;
+        //calculate what pct of max health we are currently at
+        let healthPct = currHealth / maxHealth;
+        //set health bar width
+        ui.healthEl.style.width = ui.healthElInitialWidth * healthPct;
+        //set health bar text
+        ui.healthEl.innerText = Math.round(currHealth);
+        //change color if appropriate
+        if(healthPct > 0.75) {
+            ui.healthEl.style.backgroundColor = 'green';
+            ui.healthEl.style.color = 'white';
+        } else if (healthPct > 0.5 && healthPct <= 0.75) {
+            ui.healthEl.style.backgroundColor = 'yellow';
+            ui.healthEl.style.color = 'black';
+        } else {
+            ui.healthEl.style.backgroundColor = 'red';
+            ui.healthEl.style.color = 'white';
+        }
+    }
 
 }
 
@@ -74,6 +96,7 @@ export function Player(name) {
     this.score = 0;
 
     this.health = 100;
+    this.maxHealth = 100;
     this.power = 0; //init; ship should reset this on tick
     this.maxPower = 100; //default, but ship should set this on ship init
     
@@ -92,6 +115,7 @@ export function Player(name) {
         p.ui.healthEl.innerText = p.health;
         p.ui.highScoreNameEl.innerText = p.highScoreName;
         p.ui.highScoreEl.innerText = p.highScore;
+        p.ui.renderHealth(this.health,this.maxHealth);
         p.ui.renderPower(this.power,this.maxPower);
         p.checkHighScore();
         p.checkHealth();

@@ -28,6 +28,14 @@ class UI {
         this.playerNameEl = el;
         this.playerNameEl.innerText = name;
     }
+    oldPlayerNameEl;
+    setOldPlayerNameEl = function(el) {
+        this.oldPlayerNameEl = el;
+    }
+    gameOverEl;
+    setGameOverEl = function(el) {
+        this.gameOverEl = el;
+    }
 
     renderPower = function(currPower,maxPower) {
         let ui = this;
@@ -65,13 +73,18 @@ export function Player(name) {
     this.name = name;
     this.score = 0;
 
-    this.health = 1000;
+    this.health = 10;
     this.power = 0; //init; ship should reset this on tick
     this.maxPower = 100; //default, but ship should set this on ship init
     
     this.highScore;
     
     this.ui = new UI();
+
+    this.space;
+    this.setSpace = function(space) {
+        this.space = space;
+    }
 
     this.update = function() {
         let p = this;
@@ -81,7 +94,7 @@ export function Player(name) {
         p.ui.highScoreEl.innerText = p.highScore;
         p.ui.renderPower(this.power,this.maxPower);
         p.checkHighScore();
-        p.maybeDie();
+        p.checkHealth();
     }
 
     this.checkHighScore = function() {
@@ -109,12 +122,17 @@ export function Player(name) {
         }
     }
 
-    this.maybeDie = function() {
+    this.checkHealth = function() {
         if(this.health <= 0) {
             this.ui.healthEl.style.color = 'red';
+            this.die();
         }
     }
 
-
+    this.die = function() {
+        this.space.end();
+        this.ui.oldPlayerNameEl.innerText = name;
+        this.ui.gameOverEl.show();
+    }
 
 }

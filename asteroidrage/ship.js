@@ -90,7 +90,7 @@ export function Ship(radius) {
         soundLaser();
     }
 
-    this.explode = function() {
+    this.showDamage = function() {
         let s = this;
         // console.log('YOU COLLIDED WITH AN ASTEROID!!! LOSESR!!!');
         // console.log('ship centerpoint: ' + this.currX + ', ' + this.currY);

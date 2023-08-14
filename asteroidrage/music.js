@@ -1,4 +1,4 @@
-class Music {
+export class Music {
     constructor() {
         this.conductor = new BandJS();
     }
@@ -17,24 +17,9 @@ class Music {
     unstop() {
         this.player.play();
     }
-    playZ() {
-        let conductor = new BandJS();
-        conductor.setTimeSignature(4,4);
-        conductor.setTempo(120);
-        let piano = conductor.createInstrument();
-        piano.note('quarter','G3');
-        piano.note('quarter','G4');
-        piano.note('quarter','F4');
-        piano.note('quarter','F4');
-        piano.note('quarter','G3');
-        piano.note('quarter','F4');
-        piano.note('quarter','E4');
-        let player = conductor.finish();
-        player.looping = true;
-        player.play();
-    }
+
 }
-let tracks = {
+const tracks = {
     track1: {
         timeSignature: [9, 8],
         tempo: 100,

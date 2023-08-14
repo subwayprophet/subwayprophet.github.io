@@ -172,7 +172,7 @@ function Asteroid(radius,field) {
         this.radius = radius;
         this.field = field;
 
-        this.initialPiecesOfDebrisCount = radius / 3;
+        this.initialPiecesOfDebrisCount = radius / 7;
 
         this.piecesOfDebris = [];
 

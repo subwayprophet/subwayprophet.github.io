@@ -2,6 +2,7 @@ import {canvasBackground, getRandomIntInclusive, pickRandomColor} from './canvas
 import {AsteroidField} from './asteroidfield.js';
 import {Ship} from './ship.js';
 import {DynamicMusic} from "./musicDynamic.js";
+import {Music} from "./music.js";
 
 const MAX_COLLISIONS_PER_TICKINTERVAL = 100;
 const TICKS_PER_TICKINTERVAL = 5;
@@ -16,6 +17,7 @@ export function Space(starCount, planetCount) {
     this.stars = [];
     this.planets = [];
 
+    this.staticMusic;
     this.dynamicMusic;
 
     this.player;
@@ -67,12 +69,21 @@ export function Space(starCount, planetCount) {
             let planet = this.planets[i];
             planet.exist();
         }
+
+        //init dynamic music
         this.dynamicMusic = new DynamicMusic(this);
         this.dynamicMusic.play();
+
+        this.staticMusic = new Music();
+        this.isMusicPlaying = true;
+        this.playMusic();
+
     }
 
+    this.isTheUniverseOver = false;
     //MAIN GAME LOOP!!!!!!!!!
     this.tick = function() {
+        if(this.isTheUniverseOver) return;
         let sp = this;
         sp.player.update();
         sp.stars.forEach(star => star.twinkle());
@@ -82,6 +93,10 @@ export function Space(starCount, planetCount) {
         window.requestAnimationFrame(function() {
             sp.tick();
         })
+    }
+
+    this.end = function() {
+        this.isTheUniverseOver = true;
     }
 
     this.collisionsCounted = 0;
@@ -117,7 +132,7 @@ export function Space(starCount, planetCount) {
             let shipX = ship.currX;
             let shipY = ship.currY;
             if(!asteroid.isDebris && Math.abs(asteroidX - shipX) < 30 && Math.abs(asteroidY - shipY) < 30) { //todo: get actual bounding shape from ship!
-                ship.explode();
+                ship.showDamage();
                 player.health--;
             }
             //..and asteroid-shot collisions
@@ -150,6 +165,33 @@ export function Space(starCount, planetCount) {
         }
         
         sp.collisionTicks++;
+    }
+
+    //also init static music, at least for now -- does this really belong here, though?
+    this.currTrackIndex = 1;
+    this.trackNames = ['track1','track2'];
+    this.isMusicPlaying = false;
+    this.playMusic = function(trackIndex=this.currTrackIndex) {
+        let sp = this;
+        let player = sp.staticMusic.play(sp.trackNames[trackIndex]);
+        if(!sp.isMusicPlaying) sp.staticMusic.stop(false);
+        setTimeout(() => {
+            player.stop(false);
+            if(sp.currTrackIndex >= sp.trackNames.length-1) {
+                sp.currTrackIndex = 0;
+            } else {
+                sp.currTrackIndex++;
+            }
+            sp.playMusic();
+        },10000)
+    }
+    this.stopMusic = function() {
+        this.isMusicPlaying = false;
+        this.staticMusic.stop(false);
+    }
+    this.unstopMusic = function() {
+        this.isMusicPlaying = true;
+        this.staticMusic.unstop();
     }
 
     function Star(x,y) {

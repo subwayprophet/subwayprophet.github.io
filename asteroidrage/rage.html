@@ -61,6 +61,13 @@
         color: white;
         background-color: black;
     }
+    #gameOver {
+        text-align: center; /* gradient background */
+        background: darkgrey;
+    }
+    #oldPlayerName {
+        background-color: white;
+    }
 </style>
 
 <body>
@@ -84,6 +91,16 @@
         <form method="dialog">
             <button id="startButton" onclick="window.start()">start!</button>
         </form>
+    </dialog>
+
+    <dialog id="gameOver" class="highest">
+        <p>It is a dark day for humanity.</p>
+        <p>The great human hero <span id="oldPlayerName"></span> has EXPLODED in the VACUUM of SPACE.</p>
+        <p> The asteroids have WON. The universe PLODS on toward its cold, dark END...</p>
+        <form method="dialog">
+            <button id="restartButton" onclick="location.reload()">PLAY AGAIN!!!</button>
+        </form>
+
     </dialog>
 
     <script>
@@ -178,7 +195,12 @@
             player.ui.setHighScoreNameEl(document.querySelector('#highScoreName'));
             player.ui.setPowerEl(document.querySelector('#power'));
             player.ui.setPlayerNameEl(document.querySelector('#playerName'));
+            player.ui.setOldPlayerNameEl(document.querySelector('#oldPlayerName'));
+            player.ui.setGameOverEl(document.querySelector('#gameOver'));
+
+            //space and player need to be mutually tangled..for now anyway?
             space.setPlayer(player);
+            player.setSpace(space);
 
             space.createStars();
             space.createPlanets();
@@ -189,26 +211,20 @@
 
             window.space = space;
 
-
-            //kick off sound when game starts! hooray!
-            isMusicPlaying = true;
-            playMusic();
-
-
             window.run = function(input) {
                 eval(input);
             }
         }
 
         function toggleMusic() {
-            if(isMusicPlaying) {
-                isMusicPlaying = false;
+            if(space.isMusicPlaying) {
+                space.isMusicPlaying = false;
                 document.querySelector('#music').style.backgroundColor = 'darkgrey';
-                stopMusic();
+                space.stopMusic();
             } else {
-                isMusicPlaying = true;
+                space.isMusicPlaying = true;
                 document.querySelector('#music').style.backgroundColor = 'white';
-                unstopMusic();
+                space.unstopMusic();
             }
         }
 
@@ -223,36 +239,6 @@
 
 
     <script src="lib/band.min.js"></script>
-    <script src="music.js"></script>
-    <script>
-
-        let currTrackIndex = 1;
-        let trackNames = ['track1','track2'];
-        let isMusicPlaying = true;
-        let music = new Music();
-        function playMusic(trackIndex=currTrackIndex) {
-            let player = music.play(trackNames[trackIndex]);
-            if(!isMusicPlaying) music.stop(false);
-            setTimeout(() => {
-                player.stop(false);
-                if(currTrackIndex >= trackNames.length-1) {
-                    currTrackIndex = 0;
-                } else {
-                    currTrackIndex++;
-                }
-                playMusic();
-            },20000)
-        }
-
-        function stopMusic() {
-            isMusicPlaying = false;
-            music.stop(false)
-        }
-        function unstopMusic() {
-            isMusicPlaying = true;
-            music.unstop();
-        }
-    </script>
 
 </body>
 </html>

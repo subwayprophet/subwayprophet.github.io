@@ -1,0 +1,225 @@
+<html>
+
+<style>
+    @import url('https://fonts.cdnfonts.com/css/hummus');
+    canvas {
+        position: absolute;
+        left: 0;
+        top: 40px;
+    }
+    body {
+        font-family: 'hummus', sans-serif;
+    }
+    .ui {
+        color: white;
+        font-size: larger;
+        display: flex;
+    }
+    .ui div {
+        margin: 5px;
+    }
+    .ui .inverse {
+        color: black;
+        background-color: white;
+    }
+    #health {
+        background-color: green;
+        width: 100px;
+        display: inline-flex;
+    }
+    #power {
+        background-color: green;
+        width: 100px;
+        display: inline-flex;
+    }
+    #music {
+        background-color: white;
+        border-radius: 3px;
+        padding: 3px;
+        box-shadow: 0px 0px 5px 0px white;
+    }
+    #music:hover {
+        cursor: pointer;
+    }
+    #highScoreContainer {
+        padding-right: 2em;
+        margin-left: auto;
+    }
+    #highScore {
+        padding-left: 3px;
+    }
+    body {
+        background-color: black;
+    }
+    .highest {
+        z-index: 9999999999;
+    }
+    #playerNameInput {
+        width: 100%;
+    }
+    button {
+        font-family: 'popstarregular', sans-serif;
+        width: 100%;
+        padding: 5px;
+    }
+    #startButton {
+        color: white;
+        background-color: black;
+    }
+    #gameOver {
+        text-align: center; /* gradient background */
+        background: darkgrey;
+    }
+    #oldPlayerName {
+        background-color: white;
+    }
+</style>
+
+<body>
+<div class="ui">
+    <div class="inverse"><span id="playerName"></span></div>
+    <div>score: <span id="score"></span></div>
+    <div>health: <span id="health"></span></div>
+    <div>power: <span id="power"></span></div>
+    <div id="highScoreContainer">
+        <span id="music" onclick="toggleMusic()">&#127925;</span>
+        high score: <span id="highScoreName" class="inverse"></span><span id="highScore"></span></div>
+</div>
+<canvas id="canvasBackground" width="1000" height="500" style="z-index: 0; background-color: black"></canvas>
+<canvas id="canvasMain" width="1000" height="500" style="z-index: 1"></canvas>
+<canvas id="canvasShip" width="1000" height="500" style="z-index: 2"></canvas>
+<canvas id="canvasMonster" width="1000" height="500" style="z-index: 3"></canvas>
+
+<dialog id="startDialog" class="highest" open>
+    <p>Greetings, adventuring hero! What is your name?</p>
+    <input type="text" id="playerNameInput">
+    <form method="dialog">
+        <button id="startButton" onclick="window.start()">start!</button>
+    </form>
+</dialog>
+
+<dialog id="gameOver" class="highest">
+    <p>It is a sad day for humanity.</p>
+    <p>The great human hero <span id="oldPlayerName"></span> has DROWNED in the DEPTHS of the WINE-DARK SEA.</p>
+    <p> Everyone's <i>nostos</i> has FAILED UTTERLY, despite much desiring. Not so many turns for this <i>aner</i>, it seems...</p>
+    <form method="dialog">
+        <button id="restartButton" onclick="location.reload()">PLAY AGAIN!!!</button>
+    </form>
+
+</dialog>
+
+<script>
+    //initialize canvases
+    var canvasBackground = document.getElementById('canvasBackground');
+    canvasBackground.width = window.innerWidth;
+    canvasBackground.height = window.innerHeight;
+    var canvasMain = document.getElementById('canvasMain');
+    canvasMain.width = window.innerWidth;
+    canvasMain.height = window.innerHeight;
+    var canvasShip = document.getElementById('canvasShip');
+    canvasShip.width = window.innerWidth;
+    canvasShip.height = window.innerHeight;
+    var canvasMonster = document.getElementById('canvasMonster');
+    canvasMonster.width = window.innerWidth;
+    canvasMonster.height = window.innerHeight;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        function setRandomizedDefaultName() {
+            return window.generateRandomName();
+        }
+
+        //set default username for amusement
+        // document.querySelector('#playerNameInput').value = setRandomHilariousDefaultName();
+        document.querySelector('#playerNameInput').value = setRandomizedDefaultName();
+
+        //make start button change colors awesomely
+        let startButtonColorIndex = 0;
+        let everyNFrames = 100;
+        let currFrame = 0;
+        animateStartButton();
+        function animateStartButton() {
+            if(currFrame >= everyNFrames) {
+                let startButton = document.querySelector('#startButton');
+                let colors = ['red','orange','blue','indigo','violet'];
+                if(startButtonColorIndex === colors.length-1) {
+                    startButtonColorIndex = 0;
+                } else {
+                    startButtonColorIndex++;
+                }
+                startButton.style.backgroundColor = colors[startButtonColorIndex];
+                currFrame = 0;
+            } else {
+                currFrame++;
+            }
+
+            window.requestAnimationFrame(()=> {
+                if(!!document.querySelector('#startDialog[open]')) animateStartButton()
+            });
+        }
+
+    });
+
+</script>
+
+<script type="module">
+    import{Sea} from './sea.js';
+    import {Player} from './player.js';
+    import {generateName} from "./language.js";
+    import {getRandomIntInclusive} from "./canvas.js";
+
+    //sea should exist right away -- but actual game doesn't start until player says so
+    var sea = new Sea();
+
+    let isMusicPlaying = false;
+
+    function start() {
+        let player = new Player(document.querySelector('#playerNameInput').value);
+        player.ui.setScoreEl(document.querySelector('#score'));
+        player.ui.setHealthEl(document.querySelector('#health'));
+        player.ui.setHighScoreEl(document.querySelector('#highScore'));
+        player.ui.setHighScoreNameEl(document.querySelector('#highScoreName'));
+        player.ui.setPowerEl(document.querySelector('#power'));
+        player.ui.setPlayerNameEl(document.querySelector('#playerName'));
+        player.ui.setOldPlayerNameEl(document.querySelector('#oldPlayerName'));
+        player.ui.setGameOverEl(document.querySelector('#gameOver'));
+
+        //sea and player need to be mutually tangled..for now anyway?
+        sea.setPlayer(player);
+        player.setSpace(sea);
+
+        //kick of the main game loop!
+        sea.tick();
+
+        window.space = sea;
+
+        window.run = function(input) {
+            eval(input);
+        }
+    }
+
+    function toggleMusic() {
+        if(sea.isMusicPlaying) {
+            sea.isMusicPlaying = false;
+            document.querySelector('#music').style.backgroundColor = 'darkgrey';
+            sea.stopMusic();
+        } else {
+            sea.isMusicPlaying = true;
+            document.querySelector('#music').style.backgroundColor = 'white';
+            sea.unstopMusic();
+        }
+    }
+
+    function generateRandomName() {
+        return generateName(getRandomIntInclusive(4,10)) + ' ' + generateName(getRandomIntInclusive(4,10));
+    }
+
+    window.start = start;
+    window.toggleMusic = toggleMusic;
+    window.generateRandomName = generateRandomName;
+</script>
+
+
+<script src="lib/band.min.js"></script>
+
+</body>
+</html>

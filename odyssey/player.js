@@ -1,4 +1,4 @@
-const LOCALSTORAGE_KEY_HIGHSCORE = 'ast_highScore';
+const LOCALSTORAGE_KEY_HIGHSCORE = 'ody_scylchar_highScore';
 
 class UI {
     scoreEl;

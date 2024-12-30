@@ -62,6 +62,9 @@
         width: 100%;
         padding: 5px;
     }
+    #startDialog {
+        text-align: center;
+    }
     #startButton {
         color: white;
         background-color: black;
@@ -91,7 +94,11 @@
 <canvas id="canvasMonster" width="1000" height="500" style="z-index: 3"></canvas>
 
 <dialog id="startDialog" class="highest" open>
-    <p>Greetings, adventuring hero! What is your name?</p>
+    <p>Greetings, adventuring hero!</p>
+    <p>You are now faced with a nigh-impossible navigational challenge:</p>
+    <p>to sail safely between the many-headed monster Scylla and the terrifying whirlpool Charybdis.</p>
+    <p>What is your name?</p>
+    <p>(Lest your memory disappear with your sinking ship...)</p>
     <input type="text" id="playerNameInput">
     <form method="dialog">
         <button id="startButton" onclick="window.start()">start!</button>

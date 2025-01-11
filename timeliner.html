@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Timeline</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .event {
+            margin: 10px;
+            padding: 10px;
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .event img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+        }
+        #timeline {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            overflow-y: auto;
+            position: relative;
+        }
+        #timeline::before {
+            content: 'loading...';
+            text-align: center;
+            font-size: 4rem;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 0;
+            border-top: 4px dotted #ccc;
+            z-index: 0;
+        }
+        .event::before {
+        }
+        .event:nth-child(odd)::before {
+            transform: rotate(90deg);
+            margin-bottom: 62px;
+            top: 0;
+            width: 65%;
+            content: '';
+            position: relative;
+            border-top: 4px dotted #ccc;
+            z-index: 1;
+        }
+        .event:nth-child(even)::after {
+            transform: rotate(90deg);
+            top: 80px;
+            width: 50%;
+            content: '';
+            position: relative;
+            border-top: 4px dotted #ccc;
+            z-index: 1;
+        }
+        .event:nth-child(odd) {
+            align-self: flex-end;
+        }
+        .event:nth-child(even) {
+            align-self: flex-start;
+        }
+
+        .event .remove {
+            color: red;
+            cursor: pointer;
+            font-size: smaller;
+        }
+
+        .event h3 {
+            font-size: x-large;
+            font-weight: bold;
+            z-index: 100;
+            background-color: white;
+        }
+
+        .buttons {
+            columns: 3;
+            /* align bottom of screen */
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            /* background: vertical gradient grey to white */
+            background: linear-gradient(to bottom, #ccc, white);
+            padding: 10px;
+        }
+
+        .button {
+            column-fill: balance;
+            break-inside: avoid;
+        }
+
+        button.major, input[type="file"] {
+            width: 100%;
+            font-size: x-large;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        .center {
+            text-align: center;
+        }
+        .bigger {
+            font-size: 1.5em;
+        }
+
+        /* hide buttons on print */
+        @media print {
+            .buttons {
+                display: none;
+            }
+            .remove {
+                display: none;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+    class Event {
+        constructor(dateString, text, media) {
+            this.date = this.parseDateString(dateString);
+            this.text = text;
+            this.media = media;
+            this.isWholeYear = dateString.length < 5;
+            this.id = Date.now()+text+dateString;
+        }
+        parseDateString(dateString) {
+            let date;
+            //handle negatives
+            const isNegative = dateString[0] === '-';
+            if (isNegative) {
+                dateString = dateString.slice(1);
+            }
+            let dateParts = dateString.split('-');
+            let year = parseInt(dateParts[0]);
+            if(isNegative) year *= -1;
+            if (dateParts.length === 1) {
+                date = new Date(year, 0, 1);
+            } else if (dateParts.length === 3) {
+                date = new Date(year, dateParts[1]-1, dateParts[2]);
+            }
+            //set full year to make up for assuming everything is in 1900
+            date.setFullYear(year);
+            return date.toISOString().split('T')[0];
+        }
+    }
+    class Timeline {
+        constructor(title) {
+            this.title = title;
+            this.events = []; //array of Event objects
+            this.init();
+        }
+        title;
+        events;
+        LOCAL_STORAGE_KEY = 'TimelineEvents';
+        promptToAdd() {
+            let date = prompt('Enter date (YYYY or YYYY-MM-DD)');
+            let text = prompt('Enter text');
+            this.add(date, text);
+        }
+        promptToRetitle() {
+            let newTitle = prompt('Enter new title', this.title);
+            this.retitle(newTitle);
+        }
+        promptToEdit(eventId) {
+            let event = this.events.find(event => event.id === eventId);
+            let date = prompt('Enter new date (YYYY or YYYY-MM-DD)', event.date);
+            let text = prompt('Enter new text', event.text);
+            this.edit(eventId, date, text);
+        }
+        add = (date, text, media) => {
+            this.events.push(new Event(date, text, media));
+            this.events.sort((a, b) => new Date(a.date) - new Date(b.date));
+            this.save();
+            this.render();
+        }
+        edit = (id, date, text, media) => {
+            let event = this.events.find(event => event.id === id);
+            let newEvent = new Event(date, text, media);
+            event.date = newEvent.date;
+            event.text = newEvent.text;
+            event.isWholeYear = newEvent.isWholeYear;
+            this.events.sort((a, b) => new Date(a.date) - new Date(b.date));
+            this.save();
+            this.render();
+        }
+        save = () => {
+            localStorage.setItem(this.LOCAL_STORAGE_KEY, JSON.stringify(this));
+        }
+        load = () => {
+            const timeline = JSON.parse(localStorage.getItem(this.LOCAL_STORAGE_KEY)) || {};
+            this.title = timeline.title || 'Important Benchmarks';
+            this.events = timeline.events || [];
+            this.events.sort((a, b) => new Date(a.date) - new Date(b.date));
+        }
+        exportJson() {
+            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this));
+            let downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", prompt('Enter filename')+'.json');
+            document.body.appendChild(downloadAnchorNode); // required for firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+        loadJson = (file) => {
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                const imported = JSON.parse(e.target.result);
+                this.events = imported.events;
+                this.title = imported.title;
+                this.save();
+                this.render();
+            }
+            reader.readAsText(file);
+        }
+
+        reset = () => {
+            localStorage.removeItem(this.LOCAL_STORAGE_KEY);
+            this.events = [];
+            this.title = 'Important Benchmarks';
+            this.render();
+        }
+        remove = (id) => {
+            this.events = this.events.filter(event => event.id !== id);
+            this.save();
+            this.render();
+        }
+        retitle = (newTitle) => {
+            this.title = newTitle;
+            this.save();
+            this.render();
+        }
+        render = () => {
+            let timeline = document.getElementById('timeline');
+            timeline.innerHTML = '';
+
+            //render events
+            for (let event of this.events) {
+                let div = document.createElement('div');
+                div.className = 'event';
+                div.innerHTML = `
+                    <h3>${formatDate(event)}</h3>
+                    <p>${event.text}</p>
+                `;
+                //make editable
+                div.setAttribute('data-id', event.id);
+                div.ondblclick = () => this.promptToEdit(event.id);
+
+                //add remove button
+                let remove = document.createElement('span');
+                remove.className = 'remove';
+                remove.innerHTML = '(remove)';
+                remove.onclick = () => this.remove(event.id);
+                div.appendChild(remove);
+
+                timeline.appendChild(div);
+            }
+            //render title
+            renderTitle(this.title);
+
+            //rendering helpers
+            function formatDate(event) {
+                //remove any leading 0s, before or after the negative sign
+                let dateString = event.date;
+                let dateDate = new Date(dateString);
+                let date = dateDate.toISOString().split('T')[0];
+                let dateFormatted = date.replace(/^-0+/g, '-').replace(/^-0+/g, '-');
+                //if isWholeYear is true then only show the year
+                if (event.isWholeYear) {
+                    dateFormatted = dateFormatted.slice(0, 4);
+                    //and then strip any leading 0s again (with or without a negative sign), but ONLY leading zeroes -- not trailing...and replace any trailing dashes
+                    dateFormatted = dateFormatted.replace(/^-0+/g, '-').replace(/^0+/g, '').replace(/-$/, '');
+                }
+                //and just always remove any leading zeroes
+                dateFormatted = dateFormatted.replace(/^0+/g, '');
+                return dateFormatted
+            }
+            function renderTitle(newContent) {
+                // Create a new style element
+                const style = document.createElement('style');
+                style.type = 'text/css';
+
+                // Add the CSS rule to the style element
+                style.innerHTML = `#timeline::before { content: '${newContent}'; text-align: center; }`;
+
+                // Append the style element to the document head
+                document.head.appendChild(style);
+            }
+        }
+        init = () => {
+            this.load();
+            let timeline = document.createElement('div');
+            timeline.id = 'timeline';
+            timeline.style.width = '100%';
+            timeline.style.height = '600px';
+            document.body.appendChild(timeline);
+        }
+    }
+
+    const myTimeline = new Timeline('Important Benchmarks bobo');
+
+    //render on doc ready
+    document.addEventListener('DOMContentLoaded', () => {
+        myTimeline.render();
+    });
+
+</script>
+
+<div class="buttons">
+    <div class="button">
+        <button class="major" onclick="myTimeline.promptToAdd()">Add event</button>
+    </div>
+    <div class="button">
+        <button class="major" onclick="myTimeline.reset()">Reset</button>
+    </div>
+    <div class="button">
+        <button class="major" onclick="myTimeline.promptToRetitle()">Re-title</button>
+    </div>
+    <div class="button">
+        <button class="major" onclick="print()">Print</button>
+    </div>
+    <div class="button">
+        <button class="major" onclick="myTimeline.exportJson()">Export</button>
+    </div>
+    <div class="button">
+        <p class="center bigger">Load exported file:</p>
+        <input type="file" onchange="myTimeline.loadJson(this.files[0])">
+    </div>
+</div>
+</body>
+</html>

@@ -133,7 +133,8 @@
             this.date = this.parseDateString(dateString);
             this.text = text;
             this.media = media;
-            this.isWholeYear = dateString.length < 5;
+            //string is a whole year if it contains fewer than two dashes
+            this.isWholeYear = dateString.split('-').length < 3;
             this.id = Date.now()+text+dateString;
         }
         parseDateString(dateString) {
@@ -201,7 +202,7 @@
         }
         load = () => {
             const timeline = JSON.parse(localStorage.getItem(this.LOCAL_STORAGE_KEY)) || {};
-            this.title = timeline.title || 'Important Benchmarks';
+            this.title = timeline.title || 'Important Dates';
             this.events = timeline.events || [];
             this.events.sort((a, b) => new Date(a.date) - new Date(b.date));
         }
@@ -229,7 +230,7 @@
         reset = () => {
             localStorage.removeItem(this.LOCAL_STORAGE_KEY);
             this.events = [];
-            this.title = 'Important Benchmarks';
+            this.title = 'Important Dates';
             this.render();
         }
         remove = (id) => {
@@ -274,18 +275,21 @@
             function formatDate(event) {
                 //remove any leading 0s, before or after the negative sign
                 let dateString = event.date;
+                let prefix = dateString[0] === '-' ? '-' : '';
                 let dateDate = new Date(dateString);
                 let date = dateDate.toISOString().split('T')[0];
                 let dateFormatted = date.replace(/^-0+/g, '-').replace(/^-0+/g, '-');
+                //remove any leading negative sign for now
+                dateFormatted = dateFormatted.replace(/^-/, '');
                 //if isWholeYear is true then only show the year
                 if (event.isWholeYear) {
-                    dateFormatted = dateFormatted.slice(0, 4);
+                    dateFormatted = dateFormatted.split('-')[0];
                     //and then strip any leading 0s again (with or without a negative sign), but ONLY leading zeroes -- not trailing...and replace any trailing dashes
                     dateFormatted = dateFormatted.replace(/^-0+/g, '-').replace(/^0+/g, '').replace(/-$/, '');
                 }
                 //and just always remove any leading zeroes
                 dateFormatted = dateFormatted.replace(/^0+/g, '');
-                return dateFormatted
+                return prefix + dateFormatted;
             }
             function renderTitle(newContent) {
                 // Create a new style element
@@ -309,7 +313,7 @@
         }
     }
 
-    const myTimeline = new Timeline('Important Benchmarks bobo');
+    const myTimeline = new Timeline('Important Dates');
 
     //render on doc ready
     document.addEventListener('DOMContentLoaded', () => {
